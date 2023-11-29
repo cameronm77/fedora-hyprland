@@ -146,5 +146,20 @@ cp DotFiles/bashrc ~/.bashrc
 cp DotFiles/starship.toml ~/.config/.
 cp DotFiles/nord.jpeg ~/Pictures/.
 
+# Change Plymouth
+sudo dnf install plymouth-theme-spinner -y
+sudo plymouth-set-default-theme spinner -R
+
+# Grub theme
+wget https://github.com/Jacksaur/CRT-Amber-GRUB-Theme/releases/download/1.1/CRT-Amber-Theme.zip
+sudo mkdir -p /boot/grub2/theme/CRT-Amber-Theme 
+sudo unzip -o CRT-Amber-Theme.zip -d /boot/grub2/theme/CRT-Amber-Theme
+sudo sed -i -e 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=3/' \
+            -e 's/^GRUB_TERMINAL_OUTPUT=/#GRUB_TERMINAL_OUTPUT=/' \
+            -e '$ a GRUB_THEME="/boot/grub2/theme/CRT-Amber-Theme/CRT-Amber-GRUB-Theme/theme.txt"' \
+            /etc/default/grub
+sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+rm CRT-Amber-Theme.zip
+
 echo -e "${GREEN}Installation completed successfully.${NC}"
 echo -e "${GREEN}You should now reboot.${NC}"
