@@ -62,13 +62,13 @@ sudo dnf install thunar thunar-archive-plugin thunar-media-tags-plugin thunar-vo
 # Install Bibata Cursor theme
 wget https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.4/Bibata-Modern-Classic.tar.xz
 mkdir -p ~/.local/share/icons/Bibata-Modern-Classic/
-tar -xvf Bibata-Modern-Classic.tar.xz -C ~/.local/share/icons/Bibata-Modern-Classic/
+tar -xf Bibata-Modern-Classic.tar.xz -C ~/.local/share/icons/
 rm Bibata-Modern-Classic.tar.xz 
 
 # Install Nordic Darked theme
 wget https://github.com/EliverLara/Nordic/releases/download/v2.2.0/Nordic-darker.tar.xz
 mkdir -p ~/.local/share/themes/Nordic-darker/
-tar -xvf Nordic-darker.tar.xz -C ~/.local/share/themes/Nordic-darker/
+tar -xf Nordic-darker.tar.xz -C ~/.local/share/themes/
 rm Nordic-darker.tar.xz 
 
 # Install GUI packages
@@ -77,10 +77,11 @@ rm Nordic-darker.tar.xz
 sudo dnf config-manager --add-repo https://repository.mullvad.net/rpm/stable/mullvad.repo -y
 sudo rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg -y
 sudo dnf config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo -y
+sudo dnf copr enable atim/heroic-games-launcher -y
 sudo dnf install https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
 
 # Install
-sudo dnf install mullvad-vpn easyeffects calibre cool-retro-term baobab deluge-gtk gnome-disk-utility gnucash gparted kiwix-desktop firefox sublime-text mousepad kde-connect steam grub-customizer -y
+sudo dnf install mullvad-vpn easyeffects calibre cool-retro-term baobab deluge-gtk gnome-disk-utility gnucash gparted kiwix-desktop firefox sublime-text mousepad kde-connect steam grub-customizer heroic-games-launcher-bin -y
 
 # Flatpak apps
 sudo dnf install flatpak -y
@@ -98,46 +99,29 @@ wget https://github.com/SpacingBat3/WebCord/releases/download/v4.5.2/webcord-4.5
 sudo dnf install ./webcord-4.5.2-1.x86_64.rpm -y
 rm webcord-4.5.2-1.x86_64.rpm 
 
-# Install Heroic Games Launcher
-wget https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/releases/download/v2.10.0/heroic-2.10.0.x86_64.rpm
-sudo dnf install ./heroic-2.10.0.x86_64.rpm -y
-rm heroic-2.10.0.x86_64.rpm
-
 # Enable virtualization
 echo -e "${GREEN}Enabling virtualization...${NC}"
 sudo dnf install @virtualization -y
 sudo cp /etc/libvirt/libvirtd.conf /etc/libvirt/libvirtd.conf.bak
-cat <<EOF | sudo tee /etc/libvirt/libvirtd.conf > /dev/null
-unix_sock_group = "libvirt"
-unix_sock_rw_perms = "0770"
-EOF
-sudo usermod -a -G libvirtd $(whoami)
+sudo sed -i '/^# unix_sock_group/s/.*/unix_sock_group = '"libvirt"'/' "/etc/libvirt/libvirtd.conf"
+sudo sed -i '/^# unix_sock_rw_perms/s/.*/unix_sock_rw_perms = '"0770"'/' "/etc/libvirt/libvirtd.conf"
 sudo usermod -a -G libvirt $(whoami)
+sudo systemctl enable libvirtd
 
 # Install CLI Packages
 sudo dnf install htop neovim gh autojump cmatrix hugo rclone tldr tree trash-cli powertop -y
 
 # Easyeffects Presets
+mkdir -p ~/.config/easyeffects/output
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/JackHack96/PulseEffects-Presets/master/install.sh)"
 
 # Autologin using Lightdm
 echo -e "${GREEN}Configuring autologin with Lightdm...${NC}"
 sudo cp /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.bak
-cat <<EOF | sudo tee /etc/lightdm/lightdm.conf > /dev/null
-[LightDM]
-[Seat:*]
-autologin-user=$(whoami)
-autologin-user-timeout=0
-autologin-sessions=hyprland
-[XDMCPServer]
-[VNCServer]
-EOF
-
-# Enable services
-echo -e "${GREEN}Enabling services...${NC}"
+sudo sed -i '/^\[Seat:\*]/a autologin-user='$(whoami) "/etc/lightdm/lightdm.conf"
+sudo sed -i '/^\[Seat:\*]/a autologin-user-timeout=0' "/etc/lightdm/lightdm.conf"
+sudo sed -i '/^\[Seat:\*]/a autologin-session=hyprland' "/etc/lightdm/lightdm.conf"
 sudo systemctl enable lightdm
-sudo systemctl enable libvirtd
-sudo systemctl enable cups
 sudo systemctl set-default graphical.target
 
 # Adding the Dotfiles
@@ -160,6 +144,7 @@ cp -r DotFiles/swaylock ~/.config/
 cp -r DotFiles/waybar ~/.config/
 cp DotFiles/bashrc ~/.bashrc
 cp DotFiles/starship.toml ~/.config/.
+cp DotFiles/nord.jpeg ~/Pictures/.
 
 echo -e "${GREEN}Installation completed successfully.${NC}"
 echo -e "${GREEN}You should now reboot.${NC}"
