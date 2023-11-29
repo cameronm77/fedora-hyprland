@@ -127,8 +127,8 @@ echo -e "${GREEN}Adding the Dotfiles...${NC}"
 
 # Install Bibata Cursor theme
 wget https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.4/Bibata-Modern-Classic.tar.xz
-mkdir -p /usr/share/icons/Bibata-Modern-Classic/
-tar -xf Bibata-Modern-Classic.tar.xz -C /usr/share/icons/
+sudo mkdir -p /usr/share/icons/Bibata-Modern-Classic/
+sudo tar -xf Bibata-Modern-Classic.tar.xz -C /usr/share/icons/
 sudo sed -i "s/Inherits=.*/Inherits=Bibata-Modern-Classic/" "/usr/share/icons/default/index.theme"
 rm Bibata-Modern-Classic.tar.xz
 
