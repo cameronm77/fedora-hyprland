@@ -57,19 +57,7 @@ fc-cache -fv
 sudo dnf install pamixer gammastep starship starship brightnessctl lightdm bluez blueman cups rofi wine winetricks neofetch papirus-icon-theme -y
 
 # Install all thunar packages
-sudo dnf install thunar thunar-archive-plugin thunar-media-tags-plugin thunar-volman tumbler tumbler-extras file-roller -y
-
-# Install Bibata Cursor theme
-wget https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.4/Bibata-Modern-Classic.tar.xz
-mkdir -p ~/.local/share/icons/Bibata-Modern-Classic/
-tar -xf Bibata-Modern-Classic.tar.xz -C ~/.local/share/icons/
-rm Bibata-Modern-Classic.tar.xz 
-
-# Install Nordic Darked theme
-wget https://github.com/EliverLara/Nordic/releases/download/v2.2.0/Nordic-darker.tar.xz
-mkdir -p ~/.local/share/themes/Nordic-darker/
-tar -xf Nordic-darker.tar.xz -C ~/.local/share/themes/
-rm Nordic-darker.tar.xz 
+sudo dnf install thunar thunar-archive-plugin thunar-media-tags-plugin thunar-volman tumbler tumbler-extras file-roller -y 
 
 # Install GUI packages
 
@@ -136,12 +124,27 @@ prompt_for_dotfiles() {
 prompt_for_dotfiles
 
 echo -e "${GREEN}Adding the Dotfiles...${NC}"
-cp -r DotFiles/hypr ~/.config/
-cp -r DotFiles/kitty ~/.config/
-cp -r DotFiles/neofetch ~/.config/
-cp -r DotFiles/rofi ~/.config/
-cp -r DotFiles/swaylock ~/.config/
-cp -r DotFiles/waybar ~/.config/
+
+# Install Bibata Cursor theme
+wget https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.4/Bibata-Modern-Classic.tar.xz
+mkdir -p /usr/share/icons/Bibata-Modern-Classic/
+tar -xf Bibata-Modern-Classic.tar.xz -C /usr/share/icons/
+sudo sed -i "s/Inherits=.*/Inherits=Bibata-Modern-Classic/" "/usr/share/icons/default/index.theme"
+rm Bibata-Modern-Classic.tar.xz
+
+# Install Nordic Darked theme
+wget https://github.com/EliverLara/Nordic/releases/download/v2.2.0/Nordic-darker.tar.xz
+mkdir -p ~/.local/share/themes/Nordic-darker/
+tar -xf Nordic-darker.tar.xz -C ~/.local/share/themes/
+rm Nordic-darker.tar.xz
+
+cp -r DotFiles/hypr/ ~/.config/
+cp -r DotFiles/kitty/ ~/.config/
+cp -r DotFiles/neofetch/ ~/.config/
+cp -r DotFiles/rofi/ ~/.config/
+cp -r DotFiles/swaylock/ ~/.config/
+cp -r DotFiles/waybar/ ~/.config/
+cp -r DotFiles/gtk-3.0/ ~/.config/
 cp DotFiles/bashrc ~/.bashrc
 cp DotFiles/starship.toml ~/.config/.
 cp DotFiles/nord.jpeg ~/Pictures/.
