@@ -30,7 +30,10 @@ sudo dnf install @"Common NetworkManager Submodules" @"Development Tools" @"Hard
 
 # Adding COPR packages, such as hyprland
 echo -e "${GREEN}Adding COPR repositories...${NC}"
-sudo dnf copr enable solopasha/hyprland alebastr/sway-extras trs-sod/swaylock-effects atim/starship -y
+sudo dnf copr enable solopasha/hyprland -y
+sudo dnf copr enable alebastr/sway-extras -y
+sudo dnf copr enable trs-sod/swaylock-effects -y
+sudo dnf copr enable atim/starship -y
 
 # Updating repositories list
 echo -e "${GREEN}Updating repositories...${NC}"

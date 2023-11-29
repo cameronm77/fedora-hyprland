@@ -9,11 +9,21 @@ Automate the setup of your [Minimal Fedora](https://fedoraproject.org/) with [Hy
 
 This is the way I install in my system.
 
+**Note:** This scripts contains a lot of application that you might not need... Those are the apps that I usually use, so feel free to change the script to your needs.
+
 ## Usage
 
-1. Clone this repository.
+Do this after having a minimal install of Fedora.
+
+### Before script
+1. `sudo dnf update -y`
+2. `sudo dnf install git -y`
+
+### With script
+1. Clone this repository: `git clone https://github.com/M0streng0/Fedora-M0streng0`
+2. Enter the folder: `cd Fedora-M0streng0`
 2. Run the script: `./install.sh`
-3. Follow on-screen prompts for customization.
+3. Follow on-screen prompts.
 
 **Note:** Ensure you have an active internet connection before running the script.
 
