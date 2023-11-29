@@ -91,7 +91,7 @@
     "format-source-muted": ""
   },
   "custom/launcher": {
-    "format": "  ",
+    "format": "  ",
     "on-click": "sh ~/.config/rofi/powermenu/powermenu.sh"
   }
 }

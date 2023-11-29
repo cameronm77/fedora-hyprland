@@ -77,14 +77,14 @@ rm Nordic-darker.tar.xz
 sudo dnf config-manager --add-repo https://repository.mullvad.net/rpm/stable/mullvad.repo -y
 sudo rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg -y
 sudo dnf config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo -y
-sudo dnf install https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+sudo dnf install https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
 
 # Install
 sudo dnf install mullvad-vpn easyeffects calibre cool-retro-term baobab deluge-gtk gnome-disk-utility gnucash gparted kiwix-desktop firefox sublime-text mousepad kde-connect steam grub-customizer -y
 
 # Flatpak apps
 sudo dnf install flatpak -y
-flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo -y
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 flatpak install flathub com.github.iwalton3.jellyfin-media-player -y
 flatpak install flathub com.mojang.Minecraft -y
 
@@ -105,8 +105,8 @@ rm heroic-2.10.0.x86_64.rpm
 
 # Enable virtualization
 echo -e "${GREEN}Enabling virtualization...${NC}"
-sudo dnf install @virtualization
-cp /etc/libvirt/libvirtd.conf /etc/libvirt/libvirtd.conf.bak
+sudo dnf install @virtualization -y
+sudo cp /etc/libvirt/libvirtd.conf /etc/libvirt/libvirtd.conf.bak
 cat <<EOF | sudo tee /etc/libvirt/libvirtd.conf > /dev/null
 unix_sock_group = "libvirt"
 unix_sock_rw_perms = "0770"
@@ -122,12 +122,15 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/JackHack96/PulseEffects-
 
 # Autologin using Lightdm
 echo -e "${GREEN}Configuring autologin with Lightdm...${NC}"
-cp /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.bak
+sudo cp /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.bak
 cat <<EOF | sudo tee /etc/lightdm/lightdm.conf > /dev/null
-[SeatDefaults]
+[LightDM]
+[Seat:*]
 autologin-user=$(whoami)
 autologin-user-timeout=0
 autologin-sessions=hyprland
+[XDMCPServer]
+[VNCServer]
 EOF
 
 # Enable services
@@ -155,7 +158,8 @@ cp -r DotFiles/neofetch ~/.config/
 cp -r DotFiles/rofi ~/.config/
 cp -r DotFiles/swaylock ~/.config/
 cp -r DotFiles/waybar ~/.config/
-cp DotFiles/basrc ~/.bashrc
+cp DotFiles/bashrc ~/.bashrc
 cp DotFiles/starship.toml ~/.config/.
 
 echo -e "${GREEN}Installation completed successfully.${NC}"
+echo -e "${GREEN}You should now reboot.${NC}"
