@@ -41,7 +41,7 @@ sudo dnf update -y
 
 # Install Hyprland Necessary Packages
 echo -e "${GREEN}Installing Hyprland packages...${NC}"
-sudo dnf install hyprland waybar-git polkit-gnome swww kitty swaylock-effects swayidle mako xdg-user-dirs curl wget -y
+sudo dnf install hyprland waybar-git polkit-gnome swww kitty swaylock-effects swayidle mako xdg-user-dirs curl wget tar -y
 
 # Create User Common directories
 xdg-user-dirs-update 
