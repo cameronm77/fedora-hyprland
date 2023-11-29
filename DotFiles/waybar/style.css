@@ -1,0 +1,107 @@
+* {
+  border: none;
+  border-radius: 0;
+  font-family: JetBrainsMono Nerd Font;
+  font-size: 13px;
+  min-height: 0;
+}
+/* Polar Night Colors - NORD */
+@define-color polar_darker #2e3440;
+@define-color polar_dark #3b4252;
+@define-color polar_light #434c5e;
+@define-color polar_lighter #4c566a;
+
+/* Snow Storm - NORD */
+@define-color snow_dark #d8dee9;
+@define-color snow_light #e5e9f0;
+@define-color snow_lighter #eceff4;
+
+/* Frost - NORD */
+@define-color frost_greener #8fbcbb;
+@define-color frost_light #88c0d0;
+@define-color frost_dark #81a1c1;
+@define-color frost_darker #5e81ac;
+
+/* Aurora - NORD */
+@define-color aurora_red #bf616a;
+@define-color aurora_orange #d08770;
+@define-color aurora_yellow #ebcb8b;
+@define-color aurora_green #a3be8c;
+@define-color aurora_pink #b48ead;
+
+
+window#waybar {
+  background: @polar_darker;
+  border-bottom: 3px solid @frost_darker;
+  color: @snow_lighter;
+}
+
+#workspaces button {
+  padding: 0 5px;
+  background: transparent;
+  color: @snow_lighter;
+  border-bottom: 3px solid transparent;
+}
+
+#workspaces button.focused {
+  background: @polar_dark;
+  border-bottom: 3px solid @polar_dark;
+}
+
+#custom-launcher {
+  font-size: 18px;
+}
+
+#mode, #clock, #battery {
+  padding: 0 10px;
+  margin: 0 5px;
+}
+
+#mode {
+  background: @aurora_red;
+  border-bottom: 3px solid @snow_lighter;
+}
+
+#clock {
+  background-color: @frost_dark;
+  color: @snow_lighter;
+}
+
+#battery {
+  background-color: @frost_light;
+  color: @background;
+}
+
+#battery.charging {
+  color: @background;
+  background-color: @aurora_green;
+}
+
+@keyframes blink {
+  to {
+      background-color: @frost_light;
+      color: @background;
+  }
+}
+
+#pulseaudio, #network, #cpu, #memory, #temperature, #backlight, #battery, #clock, #tray {
+   padding: 0 6px;
+   margin: 0 3px;
+}
+
+#battery.warning:not(.charging), #battery.critical:not(.charging) {
+  background: @aurora_red;
+  color: @frost_light;
+  animation-name: blink;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+#battery.warning:not(.charging) {
+  animation-duration: 0.7s;
+}
+
+#battery.critical:not(.charging) {
+  animation-duration: 0.3s;
+}
