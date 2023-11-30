@@ -69,7 +69,7 @@ sudo dnf copr enable atim/heroic-games-launcher -y
 sudo dnf install https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
 
 # Install
-sudo dnf install mullvad-vpn easyeffects calibre cool-retro-term baobab deluge-gtk gnome-disk-utility gnucash gparted kiwix-desktop firefox sublime-text mousepad kde-connect steam grub-customizer heroic-games-launcher-bin pavucontrol -y
+sudo dnf install mullvad-vpn easyeffects calibre cool-retro-term baobab deluge-gtk gnome-disk-utility gnucash gparted kiwix-desktop firefox sublime-text mousepad kde-connect steam grub-customizer heroic-games-launcher-bin pavucontrol qalculate-gtk -y
 
 # Flatpak apps
 sudo dnf install flatpak -y
@@ -97,7 +97,7 @@ sudo usermod -a -G libvirt $(whoami)
 sudo systemctl enable libvirtd
 
 # Install CLI Packages
-sudo dnf install htop neovim gh autojump cmatrix hugo rclone tldr tree trash-cli powertop -y
+sudo dnf install htop neovim gh autojump cmatrix hugo rclone tldr tree trash-cli powertop qalculate -y
 
 # Easyeffects Presets
 mkdir -p ~/.config/easyeffects/output
@@ -144,6 +144,7 @@ cp -r DotFiles/neofetch/ ~/.config/
 cp -r DotFiles/rofi/ ~/.config/
 cp -r DotFiles/swaylock/ ~/.config/
 cp -r DotFiles/waybar/ ~/.config/
+cp -r DotFiles/mako/ ~/.config/
 cp -r DotFiles/gtk-3.0/ ~/.config/
 cp DotFiles/bashrc ~/.bashrc
 cp DotFiles/starship.toml ~/.config/.
