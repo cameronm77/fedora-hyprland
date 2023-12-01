@@ -69,7 +69,7 @@ sudo dnf copr enable atim/heroic-games-launcher -y
 sudo dnf install https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
 
 # Install
-sudo dnf install mullvad-vpn easyeffects calibre cool-retro-term baobab deluge-gtk gnome-disk-utility gnucash gparted kiwix-desktop firefox sublime-text mousepad kde-connect steam grub-customizer heroic-games-launcher-bin pavucontrol qalculate-gtk -y
+sudo dnf install mullvad-vpn easyeffects calibre cool-retro-term baobab deluge-gtk gnome-disk-utility gnucash gparted kiwix-desktop firefox sublime-text mousepad kde-connect steam grub-customizer heroic-games-launcher-bin pavucontrol qalculate-gtk inkscape blender -y
 
 # Flatpak apps
 sudo dnf install flatpak -y
