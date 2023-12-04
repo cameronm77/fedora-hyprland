@@ -69,7 +69,7 @@ sudo dnf copr enable atim/heroic-games-launcher -y
 sudo dnf install https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
 
 # Install
-sudo dnf install mullvad-vpn easyeffects calibre cool-retro-term baobab deluge-gtk gnome-disk-utility gnucash gparted kiwix-desktop firefox sublime-text mousepad kde-connect steam grub-customizer heroic-games-launcher-bin pavucontrol qalculate-gtk inkscape blender ristretto retroarch -y
+sudo dnf install mullvad-vpn easyeffects calibre cool-retro-term baobab deluge-gtk gnome-disk-utility gnucash gparted kiwix-desktop firefox sublime-text mousepad kde-connect steam grub-customizer heroic-games-launcher-bin pavucontrol qalculate-gtk inkscape blender ristretto retroarch gimp gimp-resynthesizer gimp-lensfun rawtherapee hugin -y
 
 # Flatpak apps
 sudo dnf install flatpak -y
@@ -85,7 +85,7 @@ rm thorium-browser_117.0.5938.157.x86_64.rpm
 # Install WebCord
 wget https://github.com/SpacingBat3/WebCord/releases/download/v4.5.2/webcord-4.5.2-1.x86_64.rpm
 sudo dnf install ./webcord-4.5.2-1.x86_64.rpm -y
-rm webcord-4.5.2-1.x86_64.rpm 
+rm webcord-4.5.2-1.x86_64.rpm
 
 # Enable virtualization
 echo -e "${GREEN}Enabling virtualization...${NC}"
