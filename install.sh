@@ -97,7 +97,7 @@ sudo usermod -a -G libvirt $(whoami)
 sudo systemctl enable libvirtd
 
 # Install CLI Packages
-sudo dnf install htop neovim gh autojump cmatrix hugo rclone tldr tree trash-cli powertop qalculate java -y
+sudo dnf install htop neovim gh autojump cmatrix hugo rclone tldr tree trash-cli powertop qalculate java python3-pip -y
 
 # Easyeffects Presets
 mkdir -p ~/.config/easyeffects/output
