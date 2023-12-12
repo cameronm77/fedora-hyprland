@@ -65,17 +65,17 @@ sudo dnf install thunar thunar-archive-plugin thunar-media-tags-plugin thunar-vo
 sudo dnf config-manager --add-repo https://repository.mullvad.net/rpm/stable/mullvad.repo -y
 sudo rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg -y
 sudo dnf config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo -y
-sudo dnf copr enable atim/heroic-games-launcher -y
 sudo dnf install https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
 
 # Install
-sudo dnf install mullvad-vpn easyeffects calibre cool-retro-term baobab deluge-gtk gnome-disk-utility gnucash gparted kiwix-desktop firefox sublime-text mousepad kde-connect steam grub-customizer heroic-games-launcher-bin pavucontrol qalculate-gtk inkscape blender ristretto retroarch gimp gimp-resynthesizer gimp-lensfun rawtherapee hugin torbrowser-launcher  -y
+sudo dnf install mullvad-vpn easyeffects calibre cool-retro-term baobab deluge-gtk gnome-disk-utility gnucash gparted kiwix-desktop firefox sublime-text mousepad kde-connect steam grub-customizer pavucontrol qalculate-gtk inkscape blender ristretto retroarch gimp gimp-resynthesizer gimp-lensfun rawtherapee hugin torbrowser-launcher vlc -y
 
 # Flatpak apps
 sudo dnf install flatpak -y
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 flatpak install flathub com.github.iwalton3.jellyfin-media-player -y
 flatpak install flathub com.mojang.Minecraft -y
+flatpak install flathub com.heroicgameslauncher.hgl -y
 
 # Install thorium
 wget https://github.com/Alex313031/thorium/releases/download/M117.0.5938.157/thorium-browser_117.0.5938.157.x86_64.rpm
@@ -97,8 +97,7 @@ sudo usermod -a -G libvirt $(whoami)
 sudo systemctl enable libvirtd
 
 # Install CLI Packages
-sudo dnf install htop neovim gh autojump cmatrix hugo rclone tldr tree trash-cli powertop qalculate java python3-pip sudo dnf install dbus-glib
- -y
+sudo dnf install htop neovim gh autojump cmatrix hugo rclone tldr tree trash-cli powertop qalculate java python3-pip sudo dnf install dbus-glib mangohud -y
 
 # Easyeffects Presets
 mkdir -p ~/.config/easyeffects/output
