@@ -132,6 +132,7 @@ wallpaper() {
         return 1
     fi
     swww img "$1" --transition-fps 60 --transition-type wipe --transition-duration 2
+    rm -f ~/.config/wallpaper
     cp "$1" -f ~/.config/wallpaper
 }
 
