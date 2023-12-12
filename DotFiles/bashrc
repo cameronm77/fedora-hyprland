@@ -127,9 +127,26 @@ extract () {
 
 # For changing wallpaper
 wallpaper() {
+	if [ $# -ne 1 ]; then
+        echo "Usage: wallpaper image.jpg"
+        return 1
+    fi
     swww img "$1" --transition-fps 60 --transition-type wipe --transition-duration 2
+    cp "$1" -f ~/.config/wallpaper
 }
 
+# For converting mp4 to gif
+mp4togif() {
+    if [ $# -ne 1 ]; then
+        echo "Usage: mp4togif input.mp4"
+        return 1
+    fi
+
+    input_file="$1"
+    output_file="Videos/$(basename "$input_file" .mp4).gif"
+
+    ffmpeg -i "$input_file" -vf "fps=10,scale=1920:-1:flags=lanczos" -c:v gif "$output_file"
+}
 
 # Install Starship - curl -sS https://starship.rs/install.sh | sh
 eval "$(starship init bash)"

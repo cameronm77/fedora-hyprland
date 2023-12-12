@@ -28,6 +28,10 @@ prompt_for_confirmation
 echo -e "${GREEN}Installing necessary packages...${NC}"
 sudo dnf install @"Common NetworkManager Submodules" @"Development Tools" @"Hardware Support" -y
 
+# Fedora RPM Fusion
+sudo dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
+sudo dnf install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
+
 # Adding COPR packages, such as hyprland
 echo -e "${GREEN}Adding COPR repositories...${NC}"
 sudo dnf copr enable solopasha/hyprland -y
