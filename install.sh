@@ -152,6 +152,7 @@ cp -r DotFiles/mako/ ~/.config/
 cp -r DotFiles/gtk-3.0/ ~/.config/
 cp DotFiles/bashrc ~/.bashrc
 cp DotFiles/starship.toml ~/.config/.
+cp DotFiles/low-power.sh ~/.config/.
 cp DotFiles/nord.jpeg ~/.config/wallpaper
 
 # Change Plymouth

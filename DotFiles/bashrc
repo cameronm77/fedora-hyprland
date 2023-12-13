@@ -144,7 +144,7 @@ mp4togif() {
     fi
 
     input_file="$1"
-    output_file="Videos/$(basename "$input_file" .mp4).gif"
+    output_file="~/Videos/$(basename "$input_file" .mp4).gif"
 
     ffmpeg -i "$input_file" -vf "fps=10,scale=1920:-1:flags=lanczos" -c:v gif "$output_file"
 }

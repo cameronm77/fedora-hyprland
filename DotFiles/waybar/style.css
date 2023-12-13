@@ -68,7 +68,7 @@ window#waybar {
 }
 
 #battery {
-  background-color: @frost_light;
+  background-color: @aurora_yellow;
   color: @background;
 }
 
@@ -79,7 +79,7 @@ window#waybar {
 
 @keyframes blink {
   to {
-      background-color: @frost_light;
+      background-color: @aurora_yellow;
       color: @background;
   }
 }
