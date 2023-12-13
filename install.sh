@@ -3,6 +3,7 @@
 # Color codes
 GREEN='\033[0;32m'
 RED='\033[0;31m'
+YELLOW='\033[0;33m'
 NC='\033[0m' # No Color
 
 # Check internet connectivity
@@ -18,7 +19,7 @@ prompt_for_confirmation() {
     read -p "Do you want to proceed? (y/n): " choice
     case "$choice" in 
         y|Y ) ;;
-        n|N ) echo -e "${RED}Aborted by user. Exiting the script.${NC}"; exit 1;;
+        n|N ) echo -e "${YELLOW}Aborted by user. Exiting the script.${NC}"; exit 1;;
         * ) echo -e "${RED}Invalid choice. Exiting the script.${NC}"; exit 1;;
     esac
 }
@@ -50,38 +51,105 @@ sudo dnf install hyprland waybar-git polkit-gnome swww kitty swaylock-effects sw
 # Create User Common directories
 xdg-user-dirs-update 
 
-# Install Nerd Font
-wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip
-mkdir -p ~/.local/share/fonts/JetBrainsMono/
-unzip -o JetBrainsMono.zip -d ~/.local/share/fonts/JetBrainsMono/
-rm JetBrainsMono.zip 
-fc-cache -fv
-
 # Install other necessary packages
-sudo dnf install pamixer gammastep starship starship brightnessctl lightdm bluez blueman cups rofi wine winetricks neofetch papirus-icon-theme -y
+echo -e "${GREEN}Installing other necessary packages...${NC}"
+sudo dnf install pamixer gammastep starship brightnessctl lightdm bluez blueman cups rofi neofetch -y
 
 # Install all thunar packages
-sudo dnf install thunar thunar-archive-plugin thunar-media-tags-plugin thunar-volman tumbler tumbler-extras file-roller -y 
+sudo dnf install thunar thunar-archive-plugin thunar-media-tags-plugin thunar-volman tumbler tumbler-extras file-roller -y
+
+# Autologin using Lightdm
+prompt_for_autologin() {
+    read -p "Do you want to enable autologin? (y/n): " choice
+    case "$choice" in 
+        y|Y )
+            echo -e "${GREEN}Configuring autologin with Lightdm...${NC}"
+            sudo cp /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.bak
+            sudo sed -i '/^\[Seat:\*]/a autologin-user='$(whoami) "/etc/lightdm/lightdm.conf"
+            sudo sed -i '/^\[Seat:\*]/a autologin-user-timeout=0' "/etc/lightdm/lightdm.conf"
+            sudo sed -i '/^\[Seat:\*]/a autologin-session=hyprland' "/etc/lightdm/lightdm.conf"
+            ;;
+        n|N ) echo -e "${YELLOW}Canceled by user. Not enabling autologin...${NC}" ;;
+        * ) echo -e "${RED}Invalid choice. Not enabling autologin...${NC}" ;;
+    esac
+}
+prompt_for_autologin
+sudo systemctl enable lightdm
+sudo systemctl set-default graphical.target
+
+# Install Auto-cpufreq
+prompt_for_auto_cpufreq() {
+    read -p "Do you want to install Auto-cpufreq (For Laptops)? (y/n): " choice
+    case "$choice" in 
+        y|Y )
+            echo -e "${GREEN}Installing Auto-cpufreq...${NC}"
+            git clone https://github.com/AdnanHodzic/auto-cpufreq.git
+            cd auto-cpufreq
+            sudo ./auto-cpufreq-installer
+            sudo auto-cpufreq --install
+            cd ..
+            rm -rf auto-cpufreq
+            ;;
+        n|N ) echo -e "${YELLOW}Canceled by user. Not installing Auto-cpufreq...${NC}" ;;
+        * ) echo -e "${RED}Invalid choice. Not installing Auto-cpufreq...${NC}" ;;
+    esac
+}
+prompt_for_auto_cpufreq
+
+# Installing virtualization
+prompt_for_virtualization() {
+    read -p "Do you want to install virtualization? (y/n): " choice
+    case "$choice" in 
+        y|Y )
+            echo -e "${GREEN}Enabling virtualization...${NC}"
+            sudo dnf install @virtualization -y
+            sudo cp /etc/libvirt/libvirtd.conf /etc/libvirt/libvirtd.conf.bak
+            sudo sed -i '/^# unix_sock_group/s/.*/unix_sock_group = '"libvirt"'/' "/etc/libvirt/libvirtd.conf"
+            sudo sed -i '/^# unix_sock_rw_perms/s/.*/unix_sock_rw_perms = '"0770"'/' "/etc/libvirt/libvirtd.conf"
+            sudo usermod -a -G libvirt $(whoami)
+            sudo systemctl enable libvirtd
+            ;;
+        n|N ) echo -e "${YELLOW}Canceled by user. Not installing virtualization...${NC}" ;;
+        * ) echo -e "${RED}Invalid choice. Not installing virtualization...${NC}" ;;
+    esac
+}
+prompt_for_virtualization
+
+echo -e "${GREEN}Minimal Hyprland installed...${NC}"
+
+prompt_for_confirmation() {
+    read -p "Do you want to proceed with optional installations? (y/n): " choice
+    case "$choice" in 
+        y|Y ) ;;
+        n|N ) echo -e "${YELLOW}Aborted by user. Exiting the script.${NC}"; exit 1;;
+        * ) echo -e "${RED}Invalid choice. Exiting the script.${NC}"; exit 1;;
+    esac
+}
+prompt_for_confirmation
 
 # Install GUI packages
-
 # Add repos
+echo -e "${GREEN}Adding repositories...${NC}"
 sudo dnf config-manager --add-repo https://repository.mullvad.net/rpm/stable/mullvad.repo -y
 sudo rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg -y
 sudo dnf config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo -y
 sudo dnf install https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
 
 # Install
+echo -e "${GREEN}Installing GUI packages...${NC}"
 sudo dnf install mullvad-vpn easyeffects calibre cool-retro-term baobab deluge-gtk gnome-disk-utility gnucash gparted kiwix-desktop firefox sublime-text mousepad kde-connect steam grub-customizer pavucontrol qalculate-gtk inkscape blender ristretto retroarch gimp gimp-resynthesizer gimp-lensfun rawtherapee hugin torbrowser-launcher vlc -y
 
 # Flatpak apps
+echo -e "${GREEN}Installing flatpak packages...${NC}"
 sudo dnf install flatpak -y
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 flatpak install flathub com.github.iwalton3.jellyfin-media-player -y
 flatpak install flathub com.mojang.Minecraft -y
 flatpak install flathub com.heroicgameslauncher.hgl -y
+flatpak install flathub md.obsidian.Obsidian -y
 
 # Install thorium
+echo -e "${GREEN}Installing packages from GitHub...${NC}"
 wget https://github.com/Alex313031/thorium/releases/download/M117.0.5938.157/thorium-browser_117.0.5938.157.x86_64.rpm
 sudo dnf install ./thorium-browser_117.0.5938.157.x86_64.rpm  -y
 rm thorium-browser_117.0.5938.157.x86_64.rpm 
@@ -91,43 +159,42 @@ wget https://github.com/SpacingBat3/WebCord/releases/download/v4.5.2/webcord-4.5
 sudo dnf install ./webcord-4.5.2-1.x86_64.rpm -y
 rm webcord-4.5.2-1.x86_64.rpm
 
-# Enable virtualization
-echo -e "${GREEN}Enabling virtualization...${NC}"
-sudo dnf install @virtualization -y
-sudo cp /etc/libvirt/libvirtd.conf /etc/libvirt/libvirtd.conf.bak
-sudo sed -i '/^# unix_sock_group/s/.*/unix_sock_group = '"libvirt"'/' "/etc/libvirt/libvirtd.conf"
-sudo sed -i '/^# unix_sock_rw_perms/s/.*/unix_sock_rw_perms = '"0770"'/' "/etc/libvirt/libvirtd.conf"
-sudo usermod -a -G libvirt $(whoami)
-sudo systemctl enable libvirtd
-
 # Install CLI Packages
-sudo dnf install htop neovim gh autojump cmatrix hugo rclone tldr tree trash-cli powertop qalculate java python3-pip sudo dnf install dbus-glib mangohud -y
+echo -e "${GREEN}Installing CLI packages...${NC}"
+sudo dnf install htop neovim gh autojump cmatrix hugo rclone tldr tree trash-cli powertop qalculate java python3-pip sudo dnf install dbus-glib mangohud wine winetricks papirus-icon-theme -y
 
 # Easyeffects Presets
+echo -e "${GREEN}Installing easyeffects presets...${NC}"
 mkdir -p ~/.config/easyeffects/output
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/JackHack96/PulseEffects-Presets/master/install.sh)"
-
-# Autologin using Lightdm
-echo -e "${GREEN}Configuring autologin with Lightdm...${NC}"
-sudo cp /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.bak
-sudo sed -i '/^\[Seat:\*]/a autologin-user='$(whoami) "/etc/lightdm/lightdm.conf"
-sudo sed -i '/^\[Seat:\*]/a autologin-user-timeout=0' "/etc/lightdm/lightdm.conf"
-sudo sed -i '/^\[Seat:\*]/a autologin-session=hyprland' "/etc/lightdm/lightdm.conf"
-sudo systemctl enable lightdm
-sudo systemctl set-default graphical.target
 
 # Adding the Dotfiles
 prompt_for_dotfiles() {
     read -p "Do you want to add my Dotfiles? (y/n): " choice
     case "$choice" in 
-        y|Y ) ;;
-        n|N ) echo -e "${GREEN}Installation completed successfully.${NC}"; exit 1;;
-        * ) echo -e "${GREEN}Installation completed successfully.${NC}"; exit 1;;
+        y|Y ) echo -e "${GREEN}Adding the Dotfiles...${NC}" ;;
+        n|N )
+            echo -e "${YELLOW}Aborted by user. Exiting the script.${NC}"
+            echo -e "${GREEN}Installation completed successfully.${NC}"
+            echo -e "${GREEN}You should now reboot.${NC}"
+            exit 1
+            ;;
+        * )
+            echo -e "${RED}Invalid choice. Exiting the script.${NC}"
+            echo -e "${GREEN}Installation completed successfully.${NC}";
+            echo -e "${GREEN}You should now reboot.${NC}"
+            exit 1
+            ;;
     esac
 }
 prompt_for_dotfiles
 
-echo -e "${GREEN}Adding the Dotfiles...${NC}"
+# Install Nerd Font
+wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip
+mkdir -p ~/.local/share/fonts/JetBrainsMono/
+unzip -o JetBrainsMono.zip -d ~/.local/share/fonts/JetBrainsMono/
+rm JetBrainsMono.zip 
+fc-cache -fv
 
 # Install Bibata Cursor theme
 wget https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.4/Bibata-Modern-Classic.tar.xz
