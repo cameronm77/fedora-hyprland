@@ -161,7 +161,7 @@ rm webcord-4.5.2-1.x86_64.rpm
 
 # Install CLI Packages
 echo -e "${GREEN}Installing CLI packages...${NC}"
-sudo dnf install htop neovim gh autojump cmatrix hugo rclone tldr tree trash-cli powertop qalculate java python3-pip sudo dnf install dbus-glib mangohud wine winetricks papirus-icon-theme -y
+sudo dnf install htop neovim gh autojump cmatrix hugo rclone tldr tree trash-cli powertop qalculate java python3-pip sudo dnf install dbus-glib mangohud wine winetricks papirus-icon-theme wireguard-tools syncthing -y
 
 # Easyeffects Presets
 echo -e "${GREEN}Installing easyeffects presets...${NC}"
