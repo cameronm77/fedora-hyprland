@@ -147,6 +147,7 @@ flatpak install flathub com.github.iwalton3.jellyfin-media-player -y
 flatpak install flathub com.mojang.Minecraft -y
 flatpak install flathub com.heroicgameslauncher.hgl -y
 flatpak install flathub md.obsidian.Obsidian -y
+flatpak install flathub org.signal.Signal -y
 
 # Install thorium
 echo -e "${GREEN}Installing packages from GitHub...${NC}"
@@ -161,7 +162,7 @@ rm webcord-4.5.2-1.x86_64.rpm
 
 # Install CLI Packages
 echo -e "${GREEN}Installing CLI packages...${NC}"
-sudo dnf install htop neovim gh autojump cmatrix hugo rclone tldr tree trash-cli powertop qalculate java python3-pip sudo dnf install dbus-glib mangohud wine winetricks papirus-icon-theme wireguard-tools syncthing -y
+sudo dnf install htop neovim gh autojump cmatrix hugo rclone tldr tree trash-cli powertop qalculate java python3-pip sudo dnf install dbus-glib mangohud wine winetricks papirus-icon-theme wireguard-tools syncthing libwebp-devel -y
 
 # Easyeffects Presets
 echo -e "${GREEN}Installing easyeffects presets...${NC}"
