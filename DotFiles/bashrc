@@ -79,8 +79,8 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 #######################################################
 
 # Alias's for SSH
-alias Myserver='ssh -t -t -l myserver -p 35791 192.168.1.93 "export TERM=xterm-256color; bash -l"'
 alias AWS=' ssh -t -t -i ~/.ssh/AWS.pem -l admin ec2-13-39-111-218.eu-west-3.compute.amazonaws.com "export TERM=xterm-256color; bash -l"'
+alias RPiServer='ssh -t -t -l RPiServer -p 35791 192.168.1.24 "export TERM=xterm-256color; bash -l"'
 
 #######################################################
 # GENERAL ALIAS'S

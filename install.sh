@@ -137,7 +137,7 @@ sudo dnf install https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-
 
 # Install
 echo -e "${GREEN}Installing GUI packages...${NC}"
-sudo dnf install mullvad-vpn easyeffects calibre cool-retro-term baobab deluge-gtk gnome-disk-utility gnucash gparted kiwix-desktop firefox sublime-text mousepad kde-connect steam grub-customizer pavucontrol qalculate-gtk inkscape blender ristretto retroarch gimp gimp-resynthesizer gimp-lensfun rawtherapee hugin torbrowser-launcher vlc -y
+sudo dnf install mullvad-vpn easyeffects calibre cool-retro-term baobab deluge-gtk gnome-disk-utility gnucash gparted kiwix-desktop firefox sublime-text mousepad kde-connect steam grub-customizer pavucontrol qalculate-gtk inkscape blender ristretto retroarch gimp gimp-resynthesizer gimp-lensfun rawtherapee hugin torbrowser-launcher vlc rpi-imager -y
 
 # Flatpak apps
 echo -e "${GREEN}Installing flatpak packages...${NC}"
@@ -148,21 +148,33 @@ flatpak install flathub com.mojang.Minecraft -y
 flatpak install flathub com.heroicgameslauncher.hgl -y
 flatpak install flathub md.obsidian.Obsidian -y
 flatpak install flathub org.signal.Signal -y
+flatpak install flathub com.usebottles.bottles -y
 
 # Install thorium
 echo -e "${GREEN}Installing packages from GitHub...${NC}"
-wget https://github.com/Alex313031/thorium/releases/download/M117.0.5938.157/thorium-browser_117.0.5938.157.x86_64.rpm
-sudo dnf install ./thorium-browser_117.0.5938.157.x86_64.rpm  -y
-rm thorium-browser_117.0.5938.157.x86_64.rpm 
+wget https://github.com/Alex313031/thorium/releases/download/M117.0.5938.157/thorium-browser_117.0.5938.157.x86_64.rpm -o thorium-browser.rpm
+sudo dnf install ./thorium-browser.rpm  -y
+rm thorium-browser.rpm
 
-# Install WebCord
-wget https://github.com/SpacingBat3/WebCord/releases/download/v4.5.2/webcord-4.5.2-1.x86_64.rpm
-sudo dnf install ./webcord-4.5.2-1.x86_64.rpm -y
-rm webcord-4.5.2-1.x86_64.rpm
+# Install webcord
+wget https://github.com/SpacingBat3/WebCord/releases/download/v4.6.1/webcord-4.6.1-1.x86_64.rpm -O webcord.rpm
+sudo dnf install ./webcord.rpm -y
+rm webcord.rpm
+
+# AppImages
+# Install AppImageLauncher
+echo -e "${GREEN}Installing AppImages...${NC}"
+wget https://github.com/TheAssassin/AppImageLauncher/releases/download/v2.2.0/appimagelauncher-2.2.0-travis995.0f91801.x86_64.rpm -O appimagelauncher.rpm
+sudo dnf install ./appimagelauncher.rpm -y
+rm appimagelauncher.rpm
+mkdir ~/Applications
+
+# Feishin AppImage
+wget https://github.com/jeffvli/feishin/releases/download/v0.5.3/Feishin-0.5.3-linux-x86_64.AppImage -O ~/Applications/Feishin.AppImage
 
 # Install CLI Packages
 echo -e "${GREEN}Installing CLI packages...${NC}"
-sudo dnf install htop neovim gh autojump cmatrix hugo rclone tldr tree trash-cli powertop qalculate java python3-pip sudo dnf install dbus-glib mangohud wine winetricks papirus-icon-theme wireguard-tools syncthing libwebp-devel -y
+sudo dnf install htop neovim gh autojump cmatrix hugo rclone tldr tree trash-cli powertop qalculate java python3-pip sudo dnf install dbus-glib mangohud wine winetricks papirus-icon-theme wireguard-tools syncthing libwebp-devel mpv -y
 
 # Easyeffects Presets
 echo -e "${GREEN}Installing easyeffects presets...${NC}"
