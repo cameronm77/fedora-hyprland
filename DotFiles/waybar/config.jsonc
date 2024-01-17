@@ -34,7 +34,7 @@
           "warning": 30,
           "critical": 15
       },
-      "on-click": "sh ~/.config/low-power.sh",
+      "on-click": "sh ~/.config/scripts/low-power.sh",
       "format": "{capacity}% {icon} ",
       "format-icons": ["", "", "", "", ""],
       "format-charging": "{capacity}%  "

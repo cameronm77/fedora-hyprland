@@ -170,11 +170,11 @@ rm appimagelauncher.rpm
 mkdir ~/Applications
 
 # Feishin AppImage
-wget https://github.com/jeffvli/feishin/releases/download/v0.5.3/Feishin-0.5.3-linux-x86_64.AppImage -O ~/Applications/Feishin.AppImage
+wget https://github.com/jeffvli/sonixd/releases/download/v0.15.5/Sonixd-0.15.5-linux-x86_64.AppImage -O ~/Applications/Sonixd.AppImage
 
 # Install CLI Packages
 echo -e "${GREEN}Installing CLI packages...${NC}"
-sudo dnf install htop neovim gh autojump cmatrix hugo rclone tldr tree trash-cli powertop qalculate java python3-pip sudo dnf install dbus-glib mangohud wine winetricks papirus-icon-theme wireguard-tools syncthing libwebp-devel mpv -y
+sudo dnf install htop neovim gh autojump cmatrix hugo rclone tldr tree trash-cli powertop qalculate java python3-pip sudo dnf install dbus-glib mangohud wine winetricks papirus-icon-theme wireguard-tools syncthing libwebp-devel -y
 
 # Easyeffects Presets
 echo -e "${GREEN}Installing easyeffects presets...${NC}"
@@ -230,9 +230,9 @@ cp -r DotFiles/swaylock/ ~/.config/
 cp -r DotFiles/waybar/ ~/.config/
 cp -r DotFiles/mako/ ~/.config/
 cp -r DotFiles/gtk-3.0/ ~/.config/
+cp -r DotFiles/scripts/ ~/.config/
 cp DotFiles/bashrc ~/.bashrc
 cp DotFiles/starship.toml ~/.config/.
-cp DotFiles/low-power.sh ~/.config/.
 cp DotFiles/nord.jpeg ~/.config/wallpaper
 
 # Change Plymouth
