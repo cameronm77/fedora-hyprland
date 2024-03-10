@@ -131,13 +131,11 @@ prompt_for_confirmation
 # Add repos
 echo -e "${GREEN}Adding repositories...${NC}"
 sudo dnf config-manager --add-repo https://repository.mullvad.net/rpm/stable/mullvad.repo -y
-sudo rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg -y
-sudo dnf config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo -y
 sudo dnf install https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
 
 # Install
 echo -e "${GREEN}Installing GUI packages...${NC}"
-sudo dnf install mullvad-vpn easyeffects calibre cool-retro-term baobab deluge-gtk gnome-disk-utility gnucash gparted kiwix-desktop firefox sublime-text mousepad kde-connect steam grub-customizer pavucontrol qalculate-gtk inkscape blender ristretto retroarch gimp gimp-resynthesizer gimp-lensfun rawtherapee hugin torbrowser-launcher vlc rpi-imager -y
+sudo dnf install mullvad-vpn easyeffects calibre cool-retro-term baobab deluge-gtk gnome-disk-utility gnucash gparted firefox mousepad kde-connect steam grub-customizer pavucontrol qalculate-gtk inkscape ristretto gimp gimp-resynthesizer gimp-lensfun rawtherapee torbrowser-launcher vlc rpi-imager simple-scan wireshark xournalapp -y
 
 # Flatpak apps
 echo -e "${GREEN}Installing flatpak packages...${NC}"
@@ -148,16 +146,17 @@ flatpak install flathub com.mojang.Minecraft -y
 flatpak install flathub com.heroicgameslauncher.hgl -y
 flatpak install flathub md.obsidian.Obsidian -y
 flatpak install flathub org.signal.Signal -y
-flatpak install flathub com.usebottles.bottles -y
+flatpak install flathub com.github.Anuken.Mindustry -y
+flatpak install flathub org.libretro.RetroArch -y
 
 # Install thorium
 echo -e "${GREEN}Installing packages from GitHub...${NC}"
-wget https://github.com/Alex313031/thorium/releases/download/M117.0.5938.157/thorium-browser_117.0.5938.157.x86_64.rpm -o thorium-browser.rpm
+wget https://github.com/Alex313031/thorium/releases/download/M121.0.6167.204/thorium-browser_121.0.6167.204_AVX2.rpm -O thorium-browser.rpm
 sudo dnf install ./thorium-browser.rpm  -y
 rm thorium-browser.rpm
 
 # Install webcord
-wget https://github.com/SpacingBat3/WebCord/releases/download/v4.6.1/webcord-4.6.1-1.x86_64.rpm -O webcord.rpm
+wget https://github.com/SpacingBat3/WebCord/releases/download/v4.8.0/webcord-4.8.0-1.x86_64.rpm -O webcord.rpm
 sudo dnf install ./webcord.rpm -y
 rm webcord.rpm
 
@@ -174,7 +173,7 @@ wget https://github.com/jeffvli/sonixd/releases/download/v0.15.5/Sonixd-0.15.5-l
 
 # Install CLI Packages
 echo -e "${GREEN}Installing CLI packages...${NC}"
-sudo dnf install htop neovim gh autojump cmatrix hugo rclone tldr tree trash-cli powertop qalculate java python3-pip sudo dnf install dbus-glib mangohud wine winetricks papirus-icon-theme wireguard-tools syncthing libwebp-devel -y
+sudo dnf install htop neovim gh autojump cmatrix hugo rclone tldr tree trash-cli powertop qalculate java python3-pip dbus-glib mangohud wine winetricks papirus-icon-theme wireguard-tools syncthing libwebp-devel -y
 
 # Easyeffects Presets
 echo -e "${GREEN}Installing easyeffects presets...${NC}"
@@ -210,7 +209,7 @@ rm JetBrainsMono.zip
 fc-cache -fv
 
 # Install Bibata Cursor theme
-wget https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.4/Bibata-Modern-Classic.tar.xz
+wget https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.6/Bibata-Modern-Classic.tar.xz
 sudo mkdir -p /usr/share/icons/Bibata-Modern-Classic/
 sudo tar -xf Bibata-Modern-Classic.tar.xz -C /usr/share/icons/
 sudo sed -i "s/Inherits=.*/Inherits=Bibata-Modern-Classic/" "/usr/share/icons/default/index.theme"

@@ -24,8 +24,9 @@ else
     hyprctl keyword animations:enabled false
     hyprctl keyword decoration:active_opacity 2
     hyprctl keyword decoration:inactive_opacity 2
-    convert "$wallpaper"[0] "$low_power_wallpaper"
-	swww img "$low_power_wallpaper"
+    # Useful when using .gif wallpapers
+    # convert "$wallpaper"[0] "$low_power_wallpaper"
+	# swww img "$low_power_wallpaper"
 	notify-send "Low Power Mode Enabled"
 	killall waybar && waybar
 fi

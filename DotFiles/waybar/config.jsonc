@@ -37,7 +37,8 @@
       "on-click": "sh ~/.config/scripts/low-power.sh",
       "format": "{capacity}% {icon} ",
       "format-icons": ["", "", "", "", ""],
-      "format-charging": "{capacity}%  "
+      "format-charging": "{capacity}%  ",
+      "tooltip-format": "{power} W | {time}"
   },
   "network": {
       "format-wifi": "{essid} {icon}",
@@ -60,7 +61,6 @@
           "car": " ",
           "default": ["", ""]
       },
-      "scroll-step": 1,
       "on-click": "pavucontrol",
       "ignored-sinks": ["Easy Effects Sink"]
   },
