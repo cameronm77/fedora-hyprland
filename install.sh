@@ -37,7 +37,6 @@ sudo dnf install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfre
 echo -e "${GREEN}Adding COPR repositories...${NC}"
 sudo dnf copr enable solopasha/hyprland -y
 sudo dnf copr enable alebastr/sway-extras -y
-sudo dnf copr enable trs-sod/swaylock-effects -y
 sudo dnf copr enable atim/starship -y
 
 # Updating repositories list
@@ -46,7 +45,7 @@ sudo dnf update -y
 
 # Install Hyprland Necessary Packages
 echo -e "${GREEN}Installing Hyprland packages...${NC}"
-sudo dnf install hyprland waybar-git polkit-gnome swww kitty swaylock-effects swayidle mako xdg-user-dirs curl wget tar -y
+sudo dnf install hyprland hyprlock hypridle waybar-git polkit-gnome swww kitty mako xdg-user-dirs curl wget tar -y
 
 # Create User Common directories
 xdg-user-dirs-update 
@@ -226,7 +225,6 @@ cp -r DotFiles/hypr/ ~/.config/
 cp -r DotFiles/kitty/ ~/.config/
 cp -r DotFiles/neofetch/ ~/.config/
 cp -r DotFiles/rofi/ ~/.config/
-cp -r DotFiles/swaylock/ ~/.config/
 cp -r DotFiles/waybar/ ~/.config/
 cp -r DotFiles/mako/ ~/.config/
 cp -r DotFiles/gtk-3.0/ ~/.config/

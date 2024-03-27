@@ -43,9 +43,9 @@ window#waybar {
   border-bottom: 3px solid transparent;
 }
 
-#workspaces button.focused {
-  background: @polar_dark;
-  border-bottom: 3px solid @polar_dark;
+#workspaces button.active {
+  background: @frost_dark;
+  border-bottom: 3px solid @frost_dark;
 }
 
 #custom-launcher {
