@@ -53,7 +53,7 @@ xdg-user-dirs-update
 
 # Install other necessary packages
 echo -e "${GREEN}Installing other necessary packages...${NC}"
-sudo dnf install pamixer gammastep starship brightnessctl lightdm bluez blueman cups rofi neofetch -y
+sudo dnf install pamixer gammastep starship brightnessctl lightdm bluez blueman cups rofi-wayland neofetch -y
 
 # Install all thunar packages
 sudo dnf install thunar thunar-archive-plugin thunar-media-tags-plugin thunar-volman tumbler tumbler-extras file-roller -y
@@ -148,6 +148,7 @@ flatpak install flathub md.obsidian.Obsidian -y
 flatpak install flathub org.signal.Signal -y
 flatpak install flathub com.github.Anuken.Mindustry -y
 flatpak install flathub org.libretro.RetroArch -y
+flatpak install flathub org.DolphinEmu.dolphin-emu -y
 
 # Install thorium
 echo -e "${GREEN}Installing packages from GitHub...${NC}"

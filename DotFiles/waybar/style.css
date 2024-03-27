@@ -84,7 +84,7 @@ window#waybar {
   }
 }
 
-#pulseaudio, #network, #cpu, #memory, #temperature, #backlight, #battery, #clock, #tray {
+#pulseaudio, #network, #cpu, #memory, #temperature, #backlight, #battery, #clock, #tray, #idle_inhibitor {
    padding: 0 6px;
    margin: 0 3px;
 }

@@ -5,7 +5,7 @@
   // Choose the order of the modules
   "modules-left": ["custom/launcher", "hyprland/workspaces"],
   "modules-center": ["hyprland/window"],
-  "modules-right": ["tray", "pulseaudio", "pulseaudio#microphone", "custom/openvpn", "network", "cpu", "memory", "temperature", "backlight", "battery", "clock"],
+  "modules-right": ["tray", "idle_inhibitor", "pulseaudio", "pulseaudio#microphone", "custom/openvpn", "network", "cpu", "memory", "temperature", "backlight", "battery", "clock"],
   "tray": {
       "spacing": 10
   },
@@ -28,6 +28,13 @@
       "device": "intel_backlight",
       "format": "{percent}% {icon}",
       "format-icons": ["󱩎", "󱩏", "󱩐", "󱩑", "󱩒", "󱩓", "󱩔", "󱩕", "󱩖", "󰛨"]
+  },
+  "idle_inhibitor": {
+    "format": "{icon}",
+    "format-icons": {
+        "activated": "",
+        "deactivated": ""
+    }
   },
   "battery": {
       "states": {
