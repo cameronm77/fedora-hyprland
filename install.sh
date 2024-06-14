@@ -6,247 +6,309 @@ RED='\033[0;31m'
 YELLOW='\033[0;33m'
 NC='\033[0m' # No Color
 
+## Get the correct user home directory.
+USER_HOME=$(getent passwd "${SUDO_USER:-$USER}" | cut -d: -f6)
+
+# Function to print messages
+print_message() {
+    echo -e "${1}${2}${NC}"
+}
+
 # Check internet connectivity
-if ping -c 1 1.1.1.1 &> /dev/null; then
-    echo -e "${GREEN}Internet is reachable. Proceeding with the installation.${NC}"
-else
-    echo -e "${RED}Error: No internet connectivity. Exiting the script.${NC}"
-    exit 1
-fi
+check_internet() {
+    if ping -c 1 1.1.1.1 &> /dev/null; then
+        print_message "${GREEN}" "Internet is reachable. Proceeding with the installation."
+    else
+        print_message "${RED}" "Error: No internet connectivity. Exiting the script."
+        exit 1
+    fi
+}
 
 # Function to prompt user for confirmation
 prompt_for_confirmation() {
-    read -p "Do you want to proceed? (y/n): " choice
+    read -r -p "Do you want to proceed? (y/n): " choice
     case "$choice" in 
         y|Y ) ;;
-        n|N ) echo -e "${YELLOW}Aborted by user. Exiting the script.${NC}"; exit 1;;
-        * ) echo -e "${RED}Invalid choice. Exiting the script.${NC}"; exit 1;;
+        n|N ) print_message "${YELLOW}" "Aborted by user. Exiting the script."; exit 1;;
+        * ) print_message "${RED}" "Invalid choice. Exiting the script."; exit 1;;
     esac
 }
+
+# Function to install packages
+install_packages() {
+    local packages=("$@")
+    for package in "${packages[@]}"; do
+        print_message "${GREEN}" "Installing $package..."
+        if ! sudo dnf install -y "$package" &> /dev/null; then
+            print_message "${RED}" "Failed to install $package"
+        fi
+    done
+}
+
+# Function to add COPR repositories
+add_copr_repos() {
+    local repos=("$@")
+    for repo in "${repos[@]}"; do
+        print_message "${GREEN}" "Adding COPR repository $repo..."
+        if ! sudo dnf copr enable -y "$repo" &> /dev/null; then
+            print_message "${RED}" "Failed to install $repo"
+            exit 1
+        fi
+    done
+}
+
+# Function to install flatpaks
+install_flatpak() {
+    local packages=("$@")
+    for package in "${packages[@]}"; do
+        print_message "${GREEN}" "Installing $package..."
+        if ! flatpak install -y "$package" &> /dev/null; then
+            print_message "${RED}" "Failed to install $package"
+        fi
+    done
+}
+
+# Function to install from GitHub latest release
+install_latest_release() {
+    local REPO=$1
+    local ASSET_PATTERN=$2
+
+    print_message "${GREEN}" "Fetching the latest release data from GitHub for $REPO..."
+    local LATEST_RELEASE
+    LATEST_RELEASE=$(curl -s https://api.github.com/repos/"$REPO"/releases/latest)
+
+    # Extract the download URL for the desired asset
+    local DOWNLOAD_URL
+    DOWNLOAD_URL=$(echo "$LATEST_RELEASE" | jq -r ".assets[] | select(.name | endswith(\"$ASSET_PATTERN\")) | .browser_download_url")
+
+    # Check if the download URL was found
+    if [[ -z "$DOWNLOAD_URL" ]]; then
+        print_message "${RED}" "Error: No asset found with the pattern matching '$ASSET_PATTERN'."
+        return 1
+    fi
+
+    # Download the file to /tmp directory
+    local FILE_PATH="/tmp/latest-$ASSET_PATTERN"
+    print_message "${GREEN}" "Downloading the latest release - $REPO"
+    wget -q "$DOWNLOAD_URL" -O "$FILE_PATH"
+
+    # Install the package if INSTALL is true and the file is an RPM
+    if [[ "$ASSET_PATTERN" == *.rpm ]]; then
+        if sudo dnf install "$FILE_PATH" -y &> /dev/null; then
+            print_message "${GREEN}" "Installation complete."
+        else
+            print_message "${RED}" "Installation failed."
+            return 1
+        fi
+    else
+        print_message "${YELLOW}" "Downloaded to $FILE_PATH"
+    fi
+}
+
+# Function to prompt for optional installations
+prompt_for_optional_install() {
+    local prompt_message=$1
+    local action_function=$2
+    read -r -p "$prompt_message (y/n): " choice
+    case "$choice" in 
+        y|Y ) "$action_function" ;;
+        n|N ) print_message "${YELLOW}" "Canceled by user. Not proceeding with $prompt_message...";;
+        * ) print_message "${RED}" "Invalid choice. Not proceeding with $prompt_message...";;
+    esac
+}
+
+# Function to clone and install mybash and Hyprland-Dotfiles
+mybash_and_dotfiles() {
+    local repository=$1
+    # Clonning the repository
+    print_message "${YELLOW}" "Clonning $repository repository!"
+    mkdir -p "$USER_HOME/GitHub/$repository"
+    if ! git clone "https://github.com/M0streng0/$repository" "$USER_HOME/GitHub/$repository" &> /dev/null; then
+        print_message "${RED}" "Failed to clone $repository repository."
+        return 1
+    fi
+
+    # Executing the install script
+    print_message "${YELLOW}" "Running $repository setup script..."
+    "$USER_HOME/GitHub/$repository/setup.sh"
+}
+
+# Check internet connectivity
+check_internet
+
+# Prompt user for confirmation
 prompt_for_confirmation
-
-# Necessary packages
-echo -e "${GREEN}Installing necessary packages...${NC}"
-sudo dnf install @"Common NetworkManager Submodules" @"Development Tools" @"Hardware Support" -y
-
-# Fedora RPM Fusion
-sudo dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
-sudo dnf install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
-
-# Adding COPR packages, such as hyprland
-echo -e "${GREEN}Adding COPR repositories...${NC}"
-sudo dnf copr enable solopasha/hyprland -y
-sudo dnf copr enable alebastr/sway-extras -y
-sudo dnf copr enable atim/starship -y
 
 # Updating repositories list
-echo -e "${GREEN}Updating repositories...${NC}"
-sudo dnf update -y
+print_message "${GREEN}" "Updating repositories..."
+if ! sudo dnf check-update &> /dev/null; then
+    print_message "${RED}" "Failed to update the repositories."
+    exit 1
+fi
+
+# Necessary packages
+print_message "${GREEN}" "Installing necessary packages..."
+install_packages "@'Common NetworkManager Submodules'" "@'Development Tools'" "@'Hardware Support'"
+
+# Fedora RPM Fusion
+install_packages "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
+
+# Adding COPR packages, such as hyprland
+print_message "${GREEN}" "Adding COPR repositories..."
+add_copr_repos "solopasha/hyprland" "alebastr/sway-extras" "atim/starship"
 
 # Install Hyprland Necessary Packages
-echo -e "${GREEN}Installing Hyprland packages...${NC}"
-sudo dnf install hyprland hyprlock hypridle waybar-git polkit-gnome swww kitty mako xdg-user-dirs curl wget tar -y
+print_message "${GREEN}" "Installing Hyprland packages..."
+install_packages "hyprland" "hyprlock" "hypridle" "waybar-git" "polkit-gnome" "swww" "kitty" "mako" "xdg-user-dirs" "curl" "wget" "tar"
 
 # Create User Common directories
-xdg-user-dirs-update 
+xdg-user-dirs-update
 
 # Install other necessary packages
-echo -e "${GREEN}Installing other necessary packages...${NC}"
-sudo dnf install pamixer gammastep starship brightnessctl lightdm bluez blueman cups rofi-wayland neofetch -y
-
-# Install all thunar packages
-sudo dnf install thunar thunar-archive-plugin thunar-media-tags-plugin thunar-volman tumbler tumbler-extras file-roller -y
+print_message "${GREEN}" "Installing other necessary packages..."
+install_packages "pamixer" "gammastep" "starship" "brightnessctl" "lightdm" "bluez" "blueman" "cups" "rofi-wayland" "fastfetch" "thunar" "thunar-archive-plugin" "thunar-media-tags-plugin" "thunar-volman" "tumbler" "tumbler-extras" "file-roller"
 
 # Autologin using Lightdm
-prompt_for_autologin() {
-    read -p "Do you want to enable autologin? (y/n): " choice
-    case "$choice" in 
-        y|Y )
-            echo -e "${GREEN}Configuring autologin with Lightdm...${NC}"
-            sudo cp /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.bak
-            sudo sed -i '/^\[Seat:\*]/a autologin-user='$(whoami) "/etc/lightdm/lightdm.conf"
-            sudo sed -i '/^\[Seat:\*]/a autologin-user-timeout=0' "/etc/lightdm/lightdm.conf"
-            sudo sed -i '/^\[Seat:\*]/a autologin-session=hyprland' "/etc/lightdm/lightdm.conf"
-            ;;
-        n|N ) echo -e "${YELLOW}Canceled by user. Not enabling autologin...${NC}" ;;
-        * ) echo -e "${RED}Invalid choice. Not enabling autologin...${NC}" ;;
-    esac
+prompt_for_optional_install "Do you want to enable autologin?" enable_autologin
+enable_autologin() {
+    print_message "${GREEN}" "Configuring autologin with Lightdm..."
+    sudo cp /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.bak
+    sudo sed -i '/^\[Seat:\*]/a autologin-user=$(whoami)' "/etc/lightdm/lightdm.conf"
+    sudo sed -i '/^\[Seat:\*]/a autologin-user-timeout=0' "/etc/lightdm/lightdm.conf"
+    sudo sed -i '/^\[Seat:\*]/a autologin-session=hyprland' "/etc/lightdm/lightdm.conf"
+    sudo systemctl enable lightdm &> /dev/null
+    sudo systemctl set-default graphical.target &> /dev/null
 }
-prompt_for_autologin
-sudo systemctl enable lightdm
-sudo systemctl set-default graphical.target
 
 # Install Auto-cpufreq
-prompt_for_auto_cpufreq() {
-    read -p "Do you want to install Auto-cpufreq (For Laptops)? (y/n): " choice
-    case "$choice" in 
-        y|Y )
-            echo -e "${GREEN}Installing Auto-cpufreq...${NC}"
-            git clone https://github.com/AdnanHodzic/auto-cpufreq.git
-            cd auto-cpufreq
-            sudo ./auto-cpufreq-installer
-            sudo auto-cpufreq --install
-            cd ..
-            rm -rf auto-cpufreq
-            ;;
-        n|N ) echo -e "${YELLOW}Canceled by user. Not installing Auto-cpufreq...${NC}" ;;
-        * ) echo -e "${RED}Invalid choice. Not installing Auto-cpufreq...${NC}" ;;
-    esac
+prompt_for_optional_install "Do you want to install Auto-cpufreq (For Laptops)?" install_auto_cpufreq
+install_auto_cpufreq() {
+    print_message "${GREEN}" "Installing Auto-cpufreq..."
+    if ! git clone https://github.com/AdnanHodzic/auto-cpufreq.git "/tmp/auto-cpufreq" &> /dev/null; then
+        print_message "${RED}" "Failed to clone auto-cpufreq repository."
+        return 1
+    fi
+    sudo /tmp/auto-cpufreq/auto-cpufreq-installer 
+    sudo auto-cpufreq --install
 }
-prompt_for_auto_cpufreq
 
 # Installing virtualization
-prompt_for_virtualization() {
-    read -p "Do you want to install virtualization? (y/n): " choice
-    case "$choice" in 
-        y|Y )
-            echo -e "${GREEN}Enabling virtualization...${NC}"
-            sudo dnf install @virtualization -y
-            sudo cp /etc/libvirt/libvirtd.conf /etc/libvirt/libvirtd.conf.bak
-            sudo sed -i '/^# unix_sock_group/s/.*/unix_sock_group = '"libvirt"'/' "/etc/libvirt/libvirtd.conf"
-            sudo sed -i '/^# unix_sock_rw_perms/s/.*/unix_sock_rw_perms = '"0770"'/' "/etc/libvirt/libvirtd.conf"
-            sudo usermod -a -G libvirt $(whoami)
-            sudo systemctl enable libvirtd
-            ;;
-        n|N ) echo -e "${YELLOW}Canceled by user. Not installing virtualization...${NC}" ;;
-        * ) echo -e "${RED}Invalid choice. Not installing virtualization...${NC}" ;;
-    esac
+prompt_for_optional_install "Do you want to install virtualization?" install_virtualization
+install_virtualization() {
+    print_message "${GREEN}" "Enabling virtualization..."
+    if ! sudo dnf install @virtualization -y &> /dev/null; then
+        print_message "${RED}" "Failed to install virtualization packages."
+        return 1
+    fi
+    sudo cp /etc/libvirt/libvirtd.conf /etc/libvirt/libvirtd.conf.bak
+    sudo sed -i '/^# unix_sock_group/s/.*/unix_sock_group = "libvirt"/' "/etc/libvirt/libvirtd.conf"
+    sudo sed -i '/^# unix_sock_rw_perms/s/.*/unix_sock_rw_perms = "0770"/' "/etc/libvirtd/libvirtd.conf"
+    sudo usermod -a -G libvirt "$(whoami)"
+    sudo systemctl enable libvirtd &> /dev/null
 }
-prompt_for_virtualization
 
-echo -e "${GREEN}Minimal Hyprland installed...${NC}"
+print_message "${GREEN}" "Minimal Hyprland installed..."
 
-prompt_for_confirmation() {
-    read -p "Do you want to proceed with optional installations? (y/n): " choice
-    case "$choice" in 
-        y|Y ) ;;
-        n|N ) echo -e "${YELLOW}Aborted by user. Exiting the script.${NC}"; exit 1;;
-        * ) echo -e "${RED}Invalid choice. Exiting the script.${NC}"; exit 1;;
-    esac
-}
-prompt_for_confirmation
+prompt_for_confirmation "Do you want to proceed with optional installations?"
 
 # Install GUI packages
-# Add repos
-echo -e "${GREEN}Adding repositories...${NC}"
-sudo dnf config-manager --add-repo https://repository.mullvad.net/rpm/stable/mullvad.repo -y
-sudo dnf install https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
+print_message "${GREEN}" "Adding repositories..."
+if ! sudo dnf config-manager --add-repo https://repository.mullvad.net/rpm/stable/mullvad.repo -y &> /dev/null; then
+    print_message "${RED}" "Failed to add Mullvad repository."
+fi
 
-# Install
-echo -e "${GREEN}Installing GUI packages...${NC}"
-sudo dnf install mullvad-vpn easyeffects calibre cool-retro-term baobab deluge-gtk gnome-disk-utility gnucash gparted firefox mousepad kde-connect steam grub-customizer pavucontrol qalculate-gtk inkscape ristretto gimp gimp-resynthesizer gimp-lensfun rawtherapee torbrowser-launcher vlc rpi-imager simple-scan wireshark xournalapp -y
+print_message "${GREEN}" "Installing GUI packages..."
+install_packages "mullvad-vpn" "easyeffects" "calibre" "cool-retro-term" "baobab" "deluge-gtk" "gnome-disk-utility" "gnucash" "gparted" "firefox" "mousepad" "kde-connect" "steam" "grub-customizer" "pavucontrol" "qalculate-gtk" "inkscape" "ristretto" "gimp" "gimp-resynthesizer" "gimp-lensfun" "rawtherapee" "torbrowser-launcher" "vlc" "rpi-imager" "simple-scan" "wireshark" "xournalapp" "7z"
 
 # Flatpak apps
-echo -e "${GREEN}Installing flatpak packages...${NC}"
-sudo dnf install flatpak -y
+print_message "${GREEN}" "Installing flatpak packages..."
+install_packages "flatpak"
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install flathub com.github.iwalton3.jellyfin-media-player -y
-flatpak install flathub com.mojang.Minecraft -y
-flatpak install flathub com.heroicgameslauncher.hgl -y
-flatpak install flathub md.obsidian.Obsidian -y
-flatpak install flathub org.signal.Signal -y
-flatpak install flathub com.github.Anuken.Mindustry -y
-flatpak install flathub org.libretro.RetroArch -y
-flatpak install flathub org.DolphinEmu.dolphin-emu -y
+install_flatpak "flathub" "com.github.iwalton3.jellyfin-media-player" "com.mojang.Minecraft" "com.heroicgameslauncher.hgl" "md.obsidian.Obsidian" "org.signal.Signal" "com.github.Anuken.Mindustry" "org.libretro.RetroArch" "org.DolphinEmu.dolphin-emu" "com.atlauncher.ATLauncher" "one.ablaze.floorp"
+
+# Installing from GitHub
+print_message "${GREEN}" "Installing packages from GitHub..."
 
 # Install thorium
-echo -e "${GREEN}Installing packages from GitHub...${NC}"
-wget https://github.com/Alex313031/thorium/releases/download/M121.0.6167.204/thorium-browser_121.0.6167.204_AVX2.rpm -O thorium-browser.rpm
-sudo dnf install ./thorium-browser.rpm  -y
-rm thorium-browser.rpm
+install_latest_release "Alex313031/thorium" "AVX2.rpm"
 
 # Install webcord
-wget https://github.com/SpacingBat3/WebCord/releases/download/v4.8.0/webcord-4.8.0-1.x86_64.rpm -O webcord.rpm
-sudo dnf install ./webcord.rpm -y
-rm webcord.rpm
+install_latest_release "SpacingBat3/WebCord" "x86_64.rpm"
 
 # AppImages
-# Install AppImageLauncher
-echo -e "${GREEN}Installing AppImages...${NC}"
-wget https://github.com/TheAssassin/AppImageLauncher/releases/download/v2.2.0/appimagelauncher-2.2.0-travis995.0f91801.x86_64.rpm -O appimagelauncher.rpm
-sudo dnf install ./appimagelauncher.rpm -y
-rm appimagelauncher.rpm
-mkdir ~/Applications
+print_message "${GREEN}" "Installing AppImages..."
+mkdir -p ~/Applications
 
-# Feishin AppImage
-wget https://github.com/jeffvli/sonixd/releases/download/v0.15.5/Sonixd-0.15.5-linux-x86_64.AppImage -O ~/Applications/Sonixd.AppImage
+# Install AppImageLauncher
+install_latest_release "TheAssassin/AppImageLauncher" "x86_64.rpm"
+
+# Sonixd AppImage
+install_latest_release "jeffvli/sonixd" "x86_64.AppImage"
+mv "/tmp/latest-x86_64.AppImage" ~/Applications/Sonixd.AppImage
 
 # Install CLI Packages
-echo -e "${GREEN}Installing CLI packages...${NC}"
-sudo dnf install htop neovim gh autojump cmatrix hugo rclone tldr tree trash-cli powertop qalculate java python3-pip dbus-glib mangohud wine winetricks papirus-icon-theme wireguard-tools syncthing libwebp-devel -y
+print_message "${GREEN}" "Installing CLI packages..."
+install_packages "htop" "neovim" "gh" "autojump" "cmatrix" "hugo" "rclone" "tldr" "tree" "trash-cli" "powertop" "qalculate" "java" "python3-pip" "dbus-glib" "mangohud" "wine" "winetricks" "papirus-icon-theme" "wireguard-tools" "syncthing" "libwebp-devel"
 
 # Easyeffects Presets
-echo -e "${GREEN}Installing easyeffects presets...${NC}"
+print_message "${GREEN}" "Installing easyeffects presets..."
 mkdir -p ~/.config/easyeffects/output
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/JackHack96/PulseEffects-Presets/master/install.sh)"
 
-# Adding the Dotfiles
-prompt_for_dotfiles() {
-    read -p "Do you want to add my Dotfiles? (y/n): " choice
-    case "$choice" in 
-        y|Y ) echo -e "${GREEN}Adding the Dotfiles...${NC}" ;;
-        n|N )
-            echo -e "${YELLOW}Aborted by user. Exiting the script.${NC}"
-            echo -e "${GREEN}Installation completed successfully.${NC}"
-            echo -e "${GREEN}You should now reboot.${NC}"
-            exit 1
-            ;;
-        * )
-            echo -e "${RED}Invalid choice. Exiting the script.${NC}"
-            echo -e "${GREEN}Installation completed successfully.${NC}";
-            echo -e "${GREEN}You should now reboot.${NC}"
-            exit 1
-            ;;
-    esac
+# RetroGaming Install
+prompt_for_optional_install "Do you want to install RetroGaming?" install_retrograming
+install_retrograming() {
+    print_message "${GREEN}" "Installing RetroGaming..."
+    print_message "${YELLOW}" "Please verify if 3.0.2 is the latest version."
+    wget -q https://packages.es-de.org/linux/3.0.2/ES-DE_x64.AppImage -O ~/Applications/ES-DE.AppImage
+    wget -q https://buildbot.libretro.com/nightly/linux/x86_64/RetroArch.7z -O /tmp/RetroArch.7z
+    7z x /tmp/RetroArch.7z -o"/tmp" &> /dev/null
+    mv /tmp/RetroArch-Linux-x86_64/* ~/Applications/.
+    install_flatpak "org.DolphinEmu.dolphin-emu"
 }
-prompt_for_dotfiles
+
+# Adding the Dotfiles
+prompt_for_optional_install "Do you want to add my Dotfiles?" add_dotfiles
+add_dotfiles() {
+    mybash_and_dotfiles "Hyprland-Dotfiles"
+}
+
+# Adding the mybash config
+prompt_for_optional_install "Do you want to add mybash config?" add_mybash
+add_mybash() {
+    mybash_and_dotfiles "mybash"
+}
 
 # Install Nerd Font
-wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip
+install_latest_release "ryanoasis/nerd-fonts" "JetBrainsMono.zip"
 mkdir -p ~/.local/share/fonts/JetBrainsMono/
-unzip -o JetBrainsMono.zip -d ~/.local/share/fonts/JetBrainsMono/
-rm JetBrainsMono.zip 
-fc-cache -fv
+unzip -o "/tmp/latest-JetBrainsMono.zip" -d ~/.local/share/fonts/JetBrainsMono/ &> /dev/null
+fc-cache -fv &> /dev/null
 
 # Install Bibata Cursor theme
-wget https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.6/Bibata-Modern-Classic.tar.xz
+install_latest_release "ful1e5/Bibata_Cursor" "Bibata-Modern-Classic.tar.xz"
 sudo mkdir -p /usr/share/icons/Bibata-Modern-Classic/
-sudo tar -xf Bibata-Modern-Classic.tar.xz -C /usr/share/icons/
+sudo tar -xf "/tmp/latest-Bibata-Modern-Classic.tar.xz" -C /usr/share/icons/
 sudo sed -i "s/Inherits=.*/Inherits=Bibata-Modern-Classic/" "/usr/share/icons/default/index.theme"
-rm Bibata-Modern-Classic.tar.xz
 
 # Install Nordic Darked theme
-wget https://github.com/EliverLara/Nordic/releases/download/v2.2.0/Nordic-darker.tar.xz
+install_latest_release "EliverLara/Nordic" "Nordic-darker.tar.xz"
 mkdir -p ~/.local/share/themes/Nordic-darker/
-tar -xf Nordic-darker.tar.xz -C ~/.local/share/themes/
-rm Nordic-darker.tar.xz
-
-cp -r DotFiles/hypr/ ~/.config/
-cp -r DotFiles/kitty/ ~/.config/
-cp -r DotFiles/neofetch/ ~/.config/
-cp -r DotFiles/rofi/ ~/.config/
-cp -r DotFiles/waybar/ ~/.config/
-cp -r DotFiles/mako/ ~/.config/
-cp -r DotFiles/gtk-3.0/ ~/.config/
-cp -r DotFiles/scripts/ ~/.config/
-cp DotFiles/bashrc ~/.bashrc
-cp DotFiles/starship.toml ~/.config/.
-cp DotFiles/nord.jpeg ~/.config/wallpaper
+tar -xf "/tmp/latest-Nordic-darker.tar.xz" -C ~/.local/share/themes/
 
 # Change Plymouth
-sudo dnf install plymouth-theme-spinner -y
-sudo plymouth-set-default-theme spinner -R
+install_packages "plymouth-theme-spinner"
+sudo plymouth-set-default-theme spinner -R &> /dev/null
 
 # Grub theme
-wget https://github.com/Jacksaur/CRT-Amber-GRUB-Theme/releases/download/1.1/CRT-Amber-Theme.zip
-sudo mkdir -p /boot/grub2/theme/CRT-Amber-Theme 
-sudo unzip -o CRT-Amber-Theme.zip -d /boot/grub2/theme/CRT-Amber-Theme
+install_latest_release "Jacksaur/CRT-Amber-GRUB-Theme" "CRT-Amber-Theme.zip"
+sudo mkdir -p /boot/grub2/theme/CRT-Amber-Theme
+sudo unzip -o "/tmp/latest-CRT-Amber-Theme.zip" -d /boot/grub2/theme/CRT-Amber-Theme &> /dev/null
 sudo sed -i -e 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=3/' \
             -e 's/^GRUB_TERMINAL_OUTPUT=/#GRUB_TERMINAL_OUTPUT=/' \
             -e '$ a GRUB_THEME="/boot/grub2/theme/CRT-Amber-Theme/CRT-Amber-GRUB-Theme/theme.txt"' \
             /etc/default/grub
-sudo grub2-mkconfig -o /boot/grub2/grub.cfg
-rm CRT-Amber-Theme.zip
+sudo grub2-mkconfig -o /boot/grub2/grub.cfg &> /dev/null
 
-echo -e "${GREEN}Installation completed successfully.${NC}"
-echo -e "${GREEN}You should now reboot.${NC}"
+print_message "${GREEN}" "Installation completed successfully."
+print_message "${GREEN}" "You should now reboot."
