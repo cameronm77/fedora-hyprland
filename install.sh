@@ -218,13 +218,13 @@ if ! sudo dnf config-manager --add-repo https://repository.mullvad.net/rpm/stabl
 fi
 
 print_message "${GREEN}" "Installing GUI packages..."
-install_packages "mullvad-vpn" "easyeffects" "calibre" "cool-retro-term" "baobab" "deluge-gtk" "gnome-disk-utility" "gnucash" "gparted" "firefox" "mousepad" "kde-connect" "steam" "grub-customizer" "pavucontrol" "qalculate-gtk" "inkscape" "ristretto" "gimp" "gimp-resynthesizer" "gimp-lensfun" "rawtherapee" "torbrowser-launcher" "vlc" "rpi-imager" "simple-scan" "wireshark" "xournalapp" "7z"
+install_packages "mullvad-vpn" "easyeffects" "calibre" "cool-retro-term" "baobab" "deluge-gtk" "gnome-disk-utility" "gnucash" "gparted" "firefox" "mousepad" "kde-connect" "pavucontrol" "qalculate-gtk" "inkscape" "ristretto" "gimp" "gimp-resynthesizer" "gimp-lensfun" "rawtherapee" "torbrowser-launcher" "vlc" "rpi-imager" "simple-scan" "wireshark" "xournalapp" "7z"
 
 # Flatpak apps
 print_message "${GREEN}" "Installing flatpak packages..."
 install_packages "flatpak"
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-install_flatpak "flathub" "com.github.iwalton3.jellyfin-media-player" "com.mojang.Minecraft" "com.heroicgameslauncher.hgl" "md.obsidian.Obsidian" "org.signal.Signal" "com.github.Anuken.Mindustry" "org.libretro.RetroArch" "org.DolphinEmu.dolphin-emu" "com.atlauncher.ATLauncher" "one.ablaze.floorp"
+install_flatpak "flathub" "com.github.iwalton3.jellyfin-media-player" "md.obsidian.Obsidian" "org.signal.Signal" "one.ablaze.floorp"
 
 # Installing from GitHub
 print_message "${GREEN}" "Installing packages from GitHub..."
@@ -248,12 +248,20 @@ mv "/tmp/latest-x86_64.AppImage" ~/Applications/Sonixd.AppImage
 
 # Install CLI Packages
 print_message "${GREEN}" "Installing CLI packages..."
-install_packages "htop" "neovim" "gh" "autojump" "cmatrix" "hugo" "rclone" "tldr" "tree" "trash-cli" "powertop" "qalculate" "java" "python3-pip" "dbus-glib" "mangohud" "wine" "winetricks" "papirus-icon-theme" "wireguard-tools" "syncthing" "libwebp-devel"
+install_packages "htop" "neovim" "gh" "autojump" "cmatrix" "hugo" "rclone" "tldr" "tree" "trash-cli" "powertop" "qalculate" "python3-pip" "dbus-glib" "papirus-icon-theme" "wireguard-tools" "libwebp-devel"
 
 # Easyeffects Presets
 print_message "${GREEN}" "Installing easyeffects presets..."
 mkdir -p ~/.config/easyeffects/output
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/JackHack96/PulseEffects-Presets/master/install.sh)"
+
+# Gaming Install
+prompt_for_optional_install "Do you want to have a Gaming install?" install_gaming
+install_gaming() {
+    print_message "${GREEN}" "Installing Gaming..."
+    install_packages "mangohud" "steam" "lutris" "wine" "winetricks" "gamescope"
+    install_flatpak "com.github.Anuken.Mindustry" "com.atlauncher.ATLauncher" "com.mojang.Minecraft" "com.heroicgameslauncher.hgl" "net.davidotek.pupgui2"
+}
 
 # RetroGaming Install
 prompt_for_optional_install "Do you want to install RetroGaming?" install_retrograming
@@ -264,7 +272,7 @@ install_retrograming() {
     wget -q https://buildbot.libretro.com/nightly/linux/x86_64/RetroArch.7z -O /tmp/RetroArch.7z
     7z x /tmp/RetroArch.7z -o"/tmp" &> /dev/null
     mv /tmp/RetroArch-Linux-x86_64/* ~/Applications/.
-    install_flatpak "org.DolphinEmu.dolphin-emu"
+    install_flatpak "org.DolphinEmu.dolphin-emu" "org.libretro.RetroArch"
 }
 
 # Adding the Dotfiles
