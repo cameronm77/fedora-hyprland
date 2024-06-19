@@ -133,6 +133,15 @@ mybash_and_dotfiles() {
     "$USER_HOME/GitHub/$repository/setup.sh"
 }
 
+nvidia() {
+    if lspci | grep -i "nvidia" &> /dev/null; then
+        print_message "${GREEN}" "NVIDIA GPU detected. Installing NVIDIA drivers..."
+        install_packages "akmod-nvidia" "xorg-x11-drv-nvidia-cuda"
+    else
+        print_message "${YELLOW}" "No NVIDIA GPU detected. Skipping NVIDIA driver installation."
+    fi
+}
+
 # Check internet connectivity
 check_internet
 
@@ -152,6 +161,9 @@ install_packages "@'Common NetworkManager Submodules'" "@'Development Tools'" "@
 
 # Fedora RPM Fusion
 install_packages "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
+
+# Detect and install NVIDIA drivers
+nvidia
 
 # Adding COPR packages, such as hyprland
 print_message "${GREEN}" "Adding COPR repositories..."
@@ -211,6 +223,10 @@ print_message "${GREEN}" "Minimal Hyprland installed..."
 
 prompt_for_confirmation "Do you want to proceed with optional installations?"
 
+# Install CLI Packages
+print_message "${GREEN}" "Installing CLI packages..."
+install_packages "htop" "neovim" "gh" "autojump" "cmatrix" "hugo" "rclone" "tldr" "tree" "trash-cli" "powertop" "qalculate" "python3-pip" "dbus-glib" "papirus-icon-theme" "wireguard-tools" "libwebp-devel" "jq"
+
 # Install GUI packages
 print_message "${GREEN}" "Adding repositories..."
 if ! sudo dnf config-manager --add-repo https://repository.mullvad.net/rpm/stable/mullvad.repo -y &> /dev/null; then
@@ -245,10 +261,6 @@ install_latest_release "TheAssassin/AppImageLauncher" "x86_64.rpm"
 # Sonixd AppImage
 install_latest_release "jeffvli/sonixd" "x86_64.AppImage"
 mv "/tmp/latest-x86_64.AppImage" ~/Applications/Sonixd.AppImage
-
-# Install CLI Packages
-print_message "${GREEN}" "Installing CLI packages..."
-install_packages "htop" "neovim" "gh" "autojump" "cmatrix" "hugo" "rclone" "tldr" "tree" "trash-cli" "powertop" "qalculate" "python3-pip" "dbus-glib" "papirus-icon-theme" "wireguard-tools" "libwebp-devel"
 
 # Easyeffects Presets
 print_message "${GREEN}" "Installing easyeffects presets..."
