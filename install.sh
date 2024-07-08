@@ -180,45 +180,6 @@ xdg-user-dirs-update
 print_message "${GREEN}" "Installing other necessary packages..."
 install_packages "pamixer" "gammastep" "starship" "brightnessctl" "lightdm" "bluez" "blueman" "cups" "rofi-wayland" "fastfetch" "thunar" "thunar-archive-plugin" "thunar-media-tags-plugin" "thunar-volman" "tumbler" "tumbler-extras" "file-roller"
 
-# Autologin using Lightdm
-prompt_for_optional_install "Do you want to enable autologin?" enable_autologin
-enable_autologin() {
-    print_message "${GREEN}" "Configuring autologin with Lightdm..."
-    sudo cp /etc/lightdm/lightdm.conf /etc/lightdm/lightdm.conf.bak
-    sudo sed -i '/^\[Seat:\*]/a autologin-user=$(whoami)' "/etc/lightdm/lightdm.conf"
-    sudo sed -i '/^\[Seat:\*]/a autologin-user-timeout=0' "/etc/lightdm/lightdm.conf"
-    sudo sed -i '/^\[Seat:\*]/a autologin-session=hyprland' "/etc/lightdm/lightdm.conf"
-    sudo systemctl enable lightdm &> /dev/null
-    sudo systemctl set-default graphical.target &> /dev/null
-}
-
-# Install Auto-cpufreq
-prompt_for_optional_install "Do you want to install Auto-cpufreq (For Laptops)?" install_auto_cpufreq
-install_auto_cpufreq() {
-    print_message "${GREEN}" "Installing Auto-cpufreq..."
-    if ! git clone https://github.com/AdnanHodzic/auto-cpufreq.git "/tmp/auto-cpufreq" &> /dev/null; then
-        print_message "${RED}" "Failed to clone auto-cpufreq repository."
-        return 1
-    fi
-    sudo /tmp/auto-cpufreq/auto-cpufreq-installer 
-    sudo auto-cpufreq --install
-}
-
-# Installing virtualization
-prompt_for_optional_install "Do you want to install virtualization?" install_virtualization
-install_virtualization() {
-    print_message "${GREEN}" "Enabling virtualization..."
-    if ! sudo dnf install @virtualization -y &> /dev/null; then
-        print_message "${RED}" "Failed to install virtualization packages."
-        return 1
-    fi
-    sudo cp /etc/libvirt/libvirtd.conf /etc/libvirt/libvirtd.conf.bak
-    sudo sed -i '/^# unix_sock_group/s/.*/unix_sock_group = "libvirt"/' "/etc/libvirt/libvirtd.conf"
-    sudo sed -i '/^# unix_sock_rw_perms/s/.*/unix_sock_rw_perms = "0770"/' "/etc/libvirtd/libvirtd.conf"
-    sudo usermod -a -G libvirt "$(whoami)"
-    sudo systemctl enable libvirtd &> /dev/null
-}
-
 print_message "${GREEN}" "Minimal Hyprland installed..."
 
 prompt_for_confirmation "Do you want to proceed with optional installations?"
@@ -231,10 +192,19 @@ install_packages "htop" "neovim" "gh" "autojump" "cmatrix" "hugo" "rclone" "tldr
 print_message "${GREEN}" "Adding repositories..."
 if ! sudo dnf config-manager --add-repo https://repo.nordvpn.com/yum/nordvpn/centos/x86_64 -y &> /dev/null; then
     print_message "${RED}" "Failed to add NordVPN repository."
+fi
+# Install GUI packages
+print_message "${GREEN}" "Adding repositories..."
 if ! sudo dnf config-manager --add-repo https://packages.microsoft.com/yumrepos/edge -y &> /dev/null; then
     print_message "${RED}" "Failed to add MS Edge repository."
+fi
+# Install GUI packages
+print_message "${GREEN}" "Adding repositories..."
 if ! sudo dnf config-manager --add-repo https://packages.microsoft.com/fedora/40/prod -y &> /dev/null; then
     print_message "${RED}" "Failed to add MS Prod repository."
+fi
+# Install GUI packages
+print_message "${GREEN}" "Adding repositories..."
 if ! sudo dnf config-manager --add-repo https://pkg.duosecurity.com/Fedora/38/x86_64 -y &> /dev/null; then
     print_message "${RED}" "Failed to add Duo repository."
 fi
@@ -246,7 +216,7 @@ install_packages "nordvpn" "easyeffects" "calibre" "cool-retro-term" "baobab" "d
 print_message "${GREEN}" "Installing flatpak packages..."
 install_packages "flatpak"
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-install_flatpak "md.obsidian.Obsidian" "org.signal.Signal" "com.getpostman.Postman" "com.visualstudio.code" "com.microsoft.Edge" "com.bitwarden.desktop" "org.zealdocs.Zeal" "org.nmap.Zenmap" com.github.Anuken.Mindustry" "com.atlauncher.ATLauncher" "com.heroicgameslauncher.hgl" "net.davidotek.pupgui2"
+install_flatpak "md.obsidian.Obsidian" "org.signal.Signal" "com.getpostman.Postman" "com.visualstudio.code" "com.microsoft.Edge" "com.bitwarden.desktop" "org.zealdocs.Zeal" "org.nmap.Zenmap" "com.github.Anuken.Mindustry" "com.atlauncher.ATLauncher" "com.heroicgameslauncher.hgl" "net.davidotek.pupgui2"
 
 # Installing from GitHub
 print_message "${GREEN}" "Installing packages from GitHub..."
