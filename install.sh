@@ -240,7 +240,7 @@ install_packages "easyeffects" "calibre" "cool-retro-term" "baobab" "deluge-gtk"
 print_message "${GREEN}" "Installing flatpak packages..."
 install_packages "flatpak"
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-install_flatpak "flathub" "com.github.iwalton3.jellyfin-media-player" "md.obsidian.Obsidian" "org.signal.Signal" "one.ablaze.floorp"
+install_flatpak "md.obsidian.Obsidian" "org.signal.Signal"
 
 # Installing from GitHub
 print_message "${GREEN}" "Installing packages from GitHub..."
