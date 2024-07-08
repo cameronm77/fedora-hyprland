@@ -123,7 +123,7 @@ mybash_and_dotfiles() {
     # Clonning the repository
     print_message "${YELLOW}" "Clonning $repository repository!"
     mkdir -p "$USER_HOME/GitHub/$repository"
-    if ! git clone "https://github.com/M0streng0/$repository" "$USER_HOME/GitHub/$repository" &> /dev/null; then
+    if ! git clone "https://github.com/cameronm77/$repository" "$USER_HOME/GitHub/$repository" &> /dev/null; then
         print_message "${RED}" "Failed to clone $repository repository."
         return 1
     fi
@@ -157,10 +157,10 @@ fi
 
 # Necessary packages
 print_message "${GREEN}" "Installing necessary packages..."
-install_packages "@'Common NetworkManager Submodules'" "@'Development Tools'" "@'Hardware Support'"
+install_packages @"Common NetworkManager Submodules" @"Development Tools" @"Hardware Support" @"Security Lab" @"System Tools" @"Administration Tools" 
 
 # Fedora RPM Fusion
-install_packages "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
+install_packages "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm" "https://packages.microsoft.com/config/fedora/f40/packages-microsoft-prod.rpm" 
 
 # Detect and install NVIDIA drivers
 nvidia
@@ -192,18 +192,6 @@ enable_autologin() {
     sudo systemctl set-default graphical.target &> /dev/null
 }
 
-# Install Auto-cpufreq
-prompt_for_optional_install "Do you want to install Auto-cpufreq (For Laptops)?" install_auto_cpufreq
-install_auto_cpufreq() {
-    print_message "${GREEN}" "Installing Auto-cpufreq..."
-    if ! git clone https://github.com/AdnanHodzic/auto-cpufreq.git "/tmp/auto-cpufreq" &> /dev/null; then
-        print_message "${RED}" "Failed to clone auto-cpufreq repository."
-        return 1
-    fi
-    sudo /tmp/auto-cpufreq/auto-cpufreq-installer 
-    sudo auto-cpufreq --install
-}
-
 # Installing virtualization
 prompt_for_optional_install "Do you want to install virtualization?" install_virtualization
 install_virtualization() {
@@ -225,22 +213,22 @@ prompt_for_confirmation "Do you want to proceed with optional installations?"
 
 # Install CLI Packages
 print_message "${GREEN}" "Installing CLI packages..."
-install_packages "htop" "neovim" "gh" "autojump" "cmatrix" "hugo" "rclone" "tldr" "tree" "trash-cli" "powertop" "qalculate" "python3-pip" "dbus-glib" "papirus-icon-theme" "wireguard-tools" "libwebp-devel" "jq"
+install_packages "htop" "neovim" "gh" "autojump" "cmatrix" "hugo" "rclone" "tldr" "tree" "trash-cli" "powertop" "qalculate" "python3-pip" "dbus-glib" "papirus-icon-theme" "wireguard-tools" "libwebp-devel" "jq" "mtr" "zoxide" "iperf" "iperf3"
 
 # Install GUI packages
 print_message "${GREEN}" "Adding repositories..."
-if ! sudo dnf config-manager --add-repo https://repository.mullvad.net/rpm/stable/mullvad.repo -y &> /dev/null; then
-    print_message "${RED}" "Failed to add Mullvad repository."
+if ! sudo dnf config-manager --add-repo https://repo.nordvpn.com//yum/nordvpn/centos/x86_64 -y &> /dev/null; then
+    print_message "${RED}" "Failed to add NordVPN repository."
 fi
 
-print_message "${GREEN}" "Installing GUI packages..."
-install_packages "mullvad-vpn" "easyeffects" "calibre" "cool-retro-term" "baobab" "deluge-gtk" "gnome-disk-utility" "gnucash" "gparted" "firefox" "mousepad" "kde-connect" "pavucontrol" "qalculate-gtk" "inkscape" "ristretto" "gimp" "gimp-resynthesizer" "gimp-lensfun" "rawtherapee" "torbrowser-launcher" "vlc" "rpi-imager" "simple-scan" "wireshark" "xournalapp" "7z"
+print_message "${'GREEN}" "Installing GUI packages..."
+install_packages "nordvpn" "easyeffects" "calibre" "cool-retro-term" "baobab" "deluge-gtk" "gnome-disk-utility" "gparted" "firefox" "mousepad" "kde-connect" "pavucontrol" "qalculate-gtk" "inkscape" "ristretto" "gimp" "gimp-resynthesizer" "gimp-lensfun" "rawtherapee" "torbrowser-launcher" "vlc" "rpi-imager" "simple-scan" "wireshark" "xournalapp" "P7zip" "kate"  
 
 # Flatpak apps
 print_message "${GREEN}" "Installing flatpak packages..."
 install_packages "flatpak"
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-install_flatpak "flathub" "com.github.iwalton3.jellyfin-media-player" "md.obsidian.Obsidian" "org.signal.Signal" "one.ablaze.floorp"
+install_flatpak "flathub" "md.obsidian.Obsidian" "org.signal.Signal" 
 
 # Installing from GitHub
 print_message "${GREEN}" "Installing packages from GitHub..."
@@ -272,7 +260,7 @@ prompt_for_optional_install "Do you want to have a Gaming install?" install_gami
 install_gaming() {
     print_message "${GREEN}" "Installing Gaming..."
     install_packages "mangohud" "steam" "lutris" "wine" "winetricks" "gamescope"
-    install_flatpak "com.github.Anuken.Mindustry" "com.atlauncher.ATLauncher" "com.mojang.Minecraft" "com.heroicgameslauncher.hgl" "net.davidotek.pupgui2"
+    install_flatpak "com.github.Anuken.Mindustry" "com.atlauncher.ATLauncher" "com.heroicgameslauncher.hgl" "net.davidotek.pupgui2"
 }
 
 # RetroGaming Install
