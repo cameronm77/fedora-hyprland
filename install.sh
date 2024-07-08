@@ -157,7 +157,7 @@ fi
 
 # Necessary packages
 print_message "${GREEN}" "Installing necessary packages..."
-install_packages "@'Common NetworkManager Submodules'" "@'Development Tools'" "@'Hardware Support'"
+install_packages @"Common NetworkManager Submodules" @"Development Tools" @"Hardware Support" @"Security Lab" @"Adminstration Tools" @"System Tools" 
 
 # Fedora RPM Fusion
 install_packages "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
@@ -171,7 +171,7 @@ add_copr_repos "solopasha/hyprland" "alebastr/sway-extras" "atim/starship"
 
 # Install Hyprland Necessary Packages
 print_message "${GREEN}" "Installing Hyprland packages..."
-install_packages "hyprland" "hyprlock" "hypridle" "waybar-git" "polkit-gnome" "swww" "kitty" "mako" "xdg-user-dirs" "curl" "wget" "tar"
+install_packages "hyprland" "hyprlock" "hypridle" "polkit-gnome" "swww" "kitty" "mako" "xdg-user-dirs" "curl" "wget" "tar"
 
 # Create User Common directories
 xdg-user-dirs-update
