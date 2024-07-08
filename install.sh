@@ -107,8 +107,8 @@ install_latest_release() {
 
 # Function to prompt for optional installations
 prompt_for_optional_install() {
-    local prompt_message=$1
-    local action_function=$2
+    local prompt_message="$1"
+    local action_function="$2"
     read -r -p "$prompt_message (y/n): " choice
     case "$choice" in 
         y|Y ) "$action_function" ;;
@@ -157,7 +157,7 @@ fi
 
 # Necessary packages
 print_message "${GREEN}" "Installing necessary packages..."
-install_packages @"Common NetworkManager Submodules" @"Development Tools" @"Hardware Support" @"Security Lab" @"Administration Tools" @"System Tools" 
+install_packages @"Common NetworkManager Submodules" @"Development Tools" @"Hardware Support" @"Security Lab" @"Administration Tools" @"System Tools" @"C Development Tools and Libraries" @"Games and Entertainment" @"VideoLAN Client" @"Graphical Internet" @"Office/Productivity" @"LibreOffice" @"Domain Membership" @"Headless Management" @"Design Suite" @"Editors"
 
 # Fedora RPM Fusion
 install_packages "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
@@ -169,7 +169,7 @@ nvidia
 print_message "${GREEN}" "Adding COPR repositories..."
 add_copr_repos "solopasha/hyprland" "alebastr/sway-extras" "atim/starship"
 
-# Install Hyprland Necessary Packages
+# Install Hyprland Necessary Packages 
 print_message "${GREEN}" "Installing Hyprland packages..."
 install_packages "hyprland" "hyprlock" "hypridle" "polkit-gnome" "swww" "kitty" "mako" "xdg-user-dirs" "curl" "wget" "tar"
 
@@ -225,22 +225,22 @@ prompt_for_confirmation "Do you want to proceed with optional installations?"
 
 # Install CLI Packages
 print_message "${GREEN}" "Installing CLI packages..."
-install_packages "htop" "neovim" "gh" "autojump" "cmatrix" "hugo" "rclone" "tldr" "tree" "trash-cli" "powertop" "qalculate" "python3-pip" "dbus-glib" "papirus-icon-theme" "wireguard-tools" "libwebp-devel" "jq" "mtr" "P7zip"
+install_packages "htop" "neovim" "gh" "autojump" "cmatrix" "hugo" "rclone" "tldr" "tree" "trash-cli" "powertop" "qalculate" "python3-pip" "dbus-glib" "papirus-icon-theme" "wireguard-tools" "libwebp-devel" "jq" "mtr" "p7zip" "zoxide" "ykclient" "ykpers" "yubico-piv-tool" "pam_yubico" "fido2tools" "pamtester" "duo-unix" 
 
 # Install GUI packages
 print_message "${GREEN}" "Adding repositories..."
-if ! sudo dnf config-manager --add-repo https://repo.nordvpn.com/yum/centos/x86_64 -y &> /dev/null; then
+if ! sudo dnf config-manager --add-repo https://repo.nordvpn.com/yum/nordvpn/centos/x86_64 -y &> /dev/null; then
     print_message "${RED}" "Failed to add NordVPN repository."
 fi
 
 print_message "${GREEN}" "Installing GUI packages..."
-install_packages "nordvpn" "easyeffects" "calibre" "cool-retro-term" "baobab" "deluge-gtk" "gnome-disk-utility" "gnucash" "gparted" "firefox" "mousepad" "kde-connect" "pavucontrol" "qalculate-gtk" "inkscape" "ristretto" "gimp" "gimp-resynthesizer" "gimp-lensfun" "rawtherapee" "torbrowser-launcher" "vlc" "rpi-imager" "simple-scan" "wireshark"
+install_packages "nordvpn" "easyeffects" "calibre" "cool-retro-term" "baobab" "deluge-gtk" "gnome-disk-utility" "gnucash" "gparted" "firefox" "mousepad" "kde-connect" "pavucontrol" "qalculate-gtk" "inkscape" "ristretto" "gimp" "gimp-resynthesizer" "gimp-lensfun" "rawtherapee" "torbrowser-launcher" "vlc" "rpi-imager" "simple-scan" "wireshark" "nextcloud-client" "qflipper"
 
 # Flatpak apps
 print_message "${GREEN}" "Installing flatpak packages..."
 install_packages "flatpak"
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-install_flatpak "md.obsidian.Obsidian" "org.signal.Signal"
+install_flatpak "md.obsidian.Obsidian" "org.signal.Signal" "com.getpostman.Postman" "com.visualstudio.code" "com.microsoft.Edge" "com.bitwarden.desktop" "org.zealdocs.Zeal" "org.nmap.Zenmap" 
 
 # Installing from GitHub
 print_message "${GREEN}" "Installing packages from GitHub..."
@@ -268,8 +268,8 @@ mkdir -p ~/.config/easyeffects/output
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/JackHack96/PulseEffects-Presets/master/install.sh)"
 
 # Gaming Install
-prompt_for_optional_install "Do you want to have a Gaming install?" "install_gaming"
-install_gaming() {
+prompt_for_optional_install "Do you want to have a Gaming install?" install_gaming
+install_gaming () {
     print_message "${GREEN}" "Installing Gaming..."
     install_packages "mangohud" "steam" "lutris" "wine" "winetricks" "gamescope"
     install_flatpak "com.github.Anuken.Mindustry" "com.atlauncher.ATLauncher" "com.mojang.Minecraft" "com.heroicgameslauncher.hgl" "net.davidotek.pupgui2"
@@ -277,7 +277,7 @@ install_gaming() {
 
 # RetroGaming Install
 prompt_for_optional_install "Do you want to install RetroGaming?" install_retrograming
-install_retrograming() {
+install_retrograming () {
     print_message "${GREEN}" "Installing RetroGaming..."
     print_message "${YELLOW}" "Please verify if 3.0.2 is the latest version."
     wget -q https://packages.es-de.org/linux/3.0.2/ES-DE_x64.AppImage -O ~/Applications/ES-DE.AppImage
