@@ -160,14 +160,14 @@ print_message "${GREEN}" "Installing necessary packages..."
 install_packages @"Common NetworkManager Submodules" @"Development Tools" @"Hardware Support" @"Security Lab" @"Administration Tools" @"System Tools" @"C Development Tools and Libraries" @"Games and Entertainment" @"VideoLAN Client" @"Graphical Internet" @"Office/Productivity" @"LibreOffice" @"Domain Membership" @"Headless Management" @"Design Suite" @"Editors"
 
 # Fedora RPM Fusion
-install_packages "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
+install_packages "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm" "http://download1.rpmfusion.org/nonfree/fedora/steam/$releasever/$basearch/"
 
 # Detect and install NVIDIA drivers
 nvidia
 
 # Adding COPR packages, such as hyprland
 print_message "${GREEN}" "Adding COPR repositories..."
-add_copr_repos "solopasha/hyprland" "alebastr/sway-extras" "atim/starship"
+add_copr_repos "solopasha/hyprland" "alebastr/sway-extras" "atim/starship" "ryanabx/cosmic-epoch" "phracek/PyCharm"
 
 # Install Hyprland Necessary Packages 
 print_message "${GREEN}" "Installing Hyprland packages..."
@@ -231,8 +231,14 @@ install_packages "htop" "neovim" "gh" "autojump" "cmatrix" "hugo" "rclone" "tldr
 print_message "${GREEN}" "Adding repositories..."
 if ! sudo dnf config-manager --add-repo https://repo.nordvpn.com/yum/nordvpn/centos/x86_64 -y &> /dev/null; then
     print_message "${RED}" "Failed to add NordVPN repository."
+if ! sudo dnf config-manager --add-repo https://packages.microsoft.com/yumrepos/edge/ -y &> /dev/null; then
+    print_message "${RED}" "Failed to add MS Edge repository."
+if ! sudo dnf config-manager --add-repo https://packages.microsoft.com/fedora/40/prod/ -y &> /dev/null; then
+    print_message "${RED}" "Failed to add MS Prod repository."
+if ! sudo dnf config-manager --add-repo https://pkg.duosecurity.com/Fedora/38/x86_64 -y &> /dev/null; then
+    print_message "${RED}" "Failed to add MS Prod repository."
 fi
-
+x
 print_message "${GREEN}" "Installing GUI packages..."
 install_packages "nordvpn" "easyeffects" "calibre" "cool-retro-term" "baobab" "deluge-gtk" "gnome-disk-utility" "gnucash" "gparted" "firefox" "mousepad" "kde-connect" "pavucontrol" "qalculate-gtk" "inkscape" "ristretto" "gimp" "gimp-resynthesizer" "gimp-lensfun" "rawtherapee" "torbrowser-launcher" "vlc" "rpi-imager" "simple-scan" "wireshark" "nextcloud-client" "qflipper"
 
