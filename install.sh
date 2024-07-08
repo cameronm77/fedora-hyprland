@@ -157,7 +157,7 @@ fi
 
 # Necessary packages
 print_message "${GREEN}" "Installing necessary packages..."
-install_packages @"Common NetworkManager Submodules" @"Development Tools" @"Hardware Support" @"Security Lab" @"Adminstration Tools" @"System Tools" 
+install_packages @"Common NetworkManager Submodules" @"Development Tools" @"Hardware Support" @"Security Lab" @"Administration Tools" @"System Tools" 
 
 # Fedora RPM Fusion
 install_packages "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
