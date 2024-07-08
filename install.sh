@@ -240,13 +240,13 @@ if ! sudo dnf config-manager --add-repo https://pkg.duosecurity.com/Fedora/38/x8
 fi
 
 print_message "${GREEN}" "Installing GUI packages..."
-install_packages "nordvpn" "easyeffects" "calibre" "cool-retro-term" "baobab" "deluge-gtk" "gnome-disk-utility" "gnucash" "gparted" "firefox" "mousepad" "kde-connect" "pavucontrol" "qalculate-gtk" "inkscape" "ristretto" "gimp" "gimp-resynthesizer" "gimp-lensfun" "rawtherapee" "torbrowser-launcher" "vlc" "rpi-imager" "simple-scan" "wireshark" "nextcloud-client" "qflipper"
+install_packages "nordvpn" "easyeffects" "calibre" "cool-retro-term" "baobab" "deluge-gtk" "gnome-disk-utility" "gnucash" "gparted" "firefox" "mousepad" "kde-connect" "pavucontrol" "qalculate-gtk" "inkscape" "ristretto" "gimp" "gimp-resynthesizer" "gimp-lensfun" "rawtherapee" "torbrowser-launcher" "vlc" "rpi-imager" "simple-scan" "wireshark" "nextcloud-client" "qflipper" "mangohud" "steam" "lutris" "wine" "winetricks" "gamescope"
 
 # Flatpak apps
 print_message "${GREEN}" "Installing flatpak packages..."
 install_packages "flatpak"
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-install_flatpak "md.obsidian.Obsidian" "org.signal.Signal" "com.getpostman.Postman" "com.visualstudio.code" "com.microsoft.Edge" "com.bitwarden.desktop" "org.zealdocs.Zeal" "org.nmap.Zenmap" 
+install_flatpak "md.obsidian.Obsidian" "org.signal.Signal" "com.getpostman.Postman" "com.visualstudio.code" "com.microsoft.Edge" "com.bitwarden.desktop" "org.zealdocs.Zeal" "org.nmap.Zenmap" com.github.Anuken.Mindustry" "com.atlauncher.ATLauncher" "com.heroicgameslauncher.hgl" "net.davidotek.pupgui2"
 
 # Installing from GitHub
 print_message "${GREEN}" "Installing packages from GitHub..."
@@ -272,26 +272,6 @@ mv "/tmp/latest-x86_64.AppImage" ~/Applications/Sonixd.AppImage
 print_message "${GREEN}" "Installing easyeffects presets..."
 mkdir -p ~/.config/easyeffects/output
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/JackHack96/PulseEffects-Presets/master/install.sh)"
-
-# Gaming Install
-prompt_for_optional_install "Do you want to have a Gaming install?" install_gaming
-install_gaming () {
-    print_message "${GREEN}" "Installing Gaming..."
-    install_packages "mangohud" "steam" "lutris" "wine" "winetricks" "gamescope"
-    install_flatpak "com.github.Anuken.Mindustry" "com.atlauncher.ATLauncher" "com.mojang.Minecraft" "com.heroicgameslauncher.hgl" "net.davidotek.pupgui2"
-}
-
-# RetroGaming Install
-prompt_for_optional_install "Do you want to install RetroGaming?" install_retrograming
-install_retrograming () {
-    print_message "${GREEN}" "Installing RetroGaming..."
-    print_message "${YELLOW}" "Please verify if 3.0.2 is the latest version."
-    wget -q https://packages.es-de.org/linux/3.0.2/ES-DE_x64.AppImage -O ~/Applications/ES-DE.AppImage
-    wget -q https://buildbot.libretro.com/nightly/linux/x86_64/RetroArch.7z -O /tmp/RetroArch.7z
-    7z x /tmp/RetroArch.7z -o"/tmp" &> /dev/null
-    mv /tmp/RetroArch-Linux-x86_64/* ~/Applications/.
-    install_flatpak "org.DolphinEmu.dolphin-emu" "org.libretro.RetroArch"
-}
 
 # Adding the Dotfiles
 prompt_for_optional_install "Do you want to add my Dotfiles?" add_dotfiles
