@@ -225,7 +225,7 @@ prompt_for_confirmation "Do you want to proceed with optional installations?"
 
 # Install CLI Packages
 print_message "${GREEN}" "Installing CLI packages..."
-install_packages "htop" "neovim" "gh" "autojump" "cmatrix" "hugo" "rclone" "tldr" "tree" "trash-cli" "powertop" "qalculate" "python3-pip" "dbus-glib" "papirus-icon-theme" "wireguard-tools" "libwebp-devel" "jq" "mtr" "p7zip" "zoxide" "ykclient" "ykpers" "yubico-piv-tool" "pam_yubico" "fido2tools" "pamtester" "duo-unix" 
+install_packages "htop" "neovim" "gh" "autojump" "cmatrix" "hugo" "rclone" "tldr" "tree" "trash-cli" "powertop" "qalculate" "python3-pip" "dbus-glib" "papirus-icon-theme" "wireguard-tools" "libwebp-devel" "jq" "mtr" "p7zip" "zoxide" "ykclient" "ykpers" "yubico-piv-tool" "pam_yubico" "fido2-tools" "pamtester" "duo_unix" "duo_unix-selinux" "pam_duo" 
 
 # Install GUI packages
 print_message "${GREEN}" "Adding repositories..."
