@@ -268,8 +268,8 @@ mkdir -p ~/.config/easyeffects/output
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/JackHack96/PulseEffects-Presets/master/install.sh)"
 
 # Gaming Install
-prompt_for_optional_install "Do you want to have a Gaming install?" install_gaming
-"${install_gaming}"() {
+prompt_for_optional_install "Do you want to have a Gaming install?" "install_gaming"
+install_gaming() {
     print_message "${GREEN}" "Installing Gaming..."
     install_packages "mangohud" "steam" "lutris" "wine" "winetricks" "gamescope"
     install_flatpak "com.github.Anuken.Mindustry" "com.atlauncher.ATLauncher" "com.mojang.Minecraft" "com.heroicgameslauncher.hgl" "net.davidotek.pupgui2"
