@@ -150,7 +150,7 @@ prompt_for_confirmation
 
 # Updating repositories list
 print_message "${GREEN}" "Updating repositories..."
-if ! sudo dnf check-update &> /dev/null; then
+if ! sudo dnf update --refresh -y &> /dev/null; then
     print_message "${RED}" "Failed to update the repositories."
     exit 1
 fi
@@ -207,6 +207,9 @@ fi
 print_message "${GREEN}" "Adding repositories..."
 if ! sudo dnf config-manager --add-repo https://pkg.duosecurity.com/Fedora/38/x86_64 -y &> /dev/null; then
     print_message "${RED}" "Failed to add Duo repository."
+# Update Repos
+if ! sudo dnf update --refresh -y &> /dev/null; then
+    print_message "${RED}" "Failed to update repositories."
 fi
 
 print_message "${GREEN}" "Installing GUI packages..."
@@ -244,15 +247,23 @@ mkdir -p ~/.config/easyeffects/output
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/JackHack96/PulseEffects-Presets/master/install.sh)"
 
 # Adding the Dotfiles
-prompt_for_optional_install "Do you want to add my Dotfiles?" add_dotfiles
+prompt_for_optional_install "Do you want to add my Dotfiles?"
+if ! git clone "https://github.com/cameronm77/Hyprland-Dotfiles" &> /dev/null; then
+        print_message "${RED}" "Failed to clone Hyprland-Dotfiles repository."
 add_dotfiles() {
     mybash_and_dotfiles "Hyprland-Dotfiles"
 }
 
 # Adding the mybash config
-prompt_for_optional_install "Do you want to add mybash config?" add_mybash
-add_mybash() {
-    mybash_and_dotfiles "mybash"
+prompt_mybash () {
+ read -r -p "Do you want to add mybash config? (y/n): " choice
+    case "$choice" in 
+        y|Y ) ;;
+        n|N ) print_message "${YELLOW}" "Aborted by user. Exiting the script."; exit 1;;
+        * ) print_message "${RED}" "Invalid choice. Exiting the script."; exit 1;;
+    esac
+if ! git clone "https://github.com/cameronm77/mybash" "$USER_HOME/mybash" &> /dev/null; then
+        print_message "${RED}" "Failed to clone $repository repository."
 }
 
 # Install Nerd Font
