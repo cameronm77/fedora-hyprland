@@ -225,7 +225,7 @@ prompt_for_confirmation "Do you want to proceed with optional installations?"
 
 # Install CLI Packages
 print_message "${GREEN}" "Installing CLI packages..."
-install_packages "htop" "neovim" "gh" "autojump" "cmatrix" "hugo" "rclone" "tldr" "tree" "trash-cli" "powertop" "qalculate" "python3-pip" "dbus-glib" "papirus-icon-theme" "wireguard-tools" "libwebp-devel" "jq" "mtr"
+install_packages "htop" "neovim" "gh" "autojump" "cmatrix" "hugo" "rclone" "tldr" "tree" "trash-cli" "powertop" "qalculate" "python3-pip" "dbus-glib" "papirus-icon-theme" "wireguard-tools" "libwebp-devel" "jq" "mtr" "P7zip"
 
 # Install GUI packages
 print_message "${GREEN}" "Adding repositories..."
@@ -234,7 +234,7 @@ if ! sudo dnf config-manager --add-repo https://repo.nordvpn.com/yum/centos/x86_
 fi
 
 print_message "${GREEN}" "Installing GUI packages..."
-install_packages "easyeffects" "calibre" "cool-retro-term" "baobab" "deluge-gtk" "gnome-disk-utility" "gnucash" "gparted" "firefox" "mousepad" "kde-connect" "pavucontrol" "qalculate-gtk" "inkscape" "ristretto" "gimp" "gimp-resynthesizer" "gimp-lensfun" "rawtherapee" "torbrowser-launcher" "vlc" "rpi-imager" "simple-scan" "wireshark" "xournalapp" "7z"
+install_packages "easyeffects" "calibre" "cool-retro-term" "baobab" "deluge-gtk" "gnome-disk-utility" "gnucash" "gparted" "firefox" "mousepad" "kde-connect" "pavucontrol" "qalculate-gtk" "inkscape" "ristretto" "gimp" "gimp-resynthesizer" "gimp-lensfun" "rawtherapee" "torbrowser-launcher" "vlc" "rpi-imager" "simple-scan" "wireshark" "xournalapp"
 
 # Flatpak apps
 print_message "${GREEN}" "Installing flatpak packages..."
@@ -269,7 +269,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/JackHack96/PulseEffects-
 
 # Gaming Install
 prompt_for_optional_install "Do you want to have a Gaming install?" install_gaming
-install_gaming() {
+"${install_gaming}"() {
     print_message "${GREEN}" "Installing Gaming..."
     install_packages "mangohud" "steam" "lutris" "wine" "winetricks" "gamescope"
     install_flatpak "com.github.Anuken.Mindustry" "com.atlauncher.ATLauncher" "com.mojang.Minecraft" "com.heroicgameslauncher.hgl" "net.davidotek.pupgui2"
