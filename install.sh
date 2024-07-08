@@ -136,7 +136,7 @@ mybash_and_dotfiles() {
 nvidia() {
     if lspci | grep -i "nvidia" &> /dev/null; then
         print_message "${GREEN}" "NVIDIA GPU detected. Installing NVIDIA drivers..."
-        install_packages "akmod-nvidia" "xorg-x11-drv-nvidia-cuda"
+        install_packages "akmod-nvidia" "xorg-x11-drv-nvidia-cuda" "nvidia-vaapi-driver" "libva-utils" "vdpauinfo" "vulkan"
     else
         print_message "${YELLOW}" "No NVIDIA GPU detected. Skipping NVIDIA driver installation."
     fi
