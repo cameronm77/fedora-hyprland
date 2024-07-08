@@ -192,6 +192,18 @@ enable_autologin() {
     sudo systemctl set-default graphical.target &> /dev/null
 }
 
+# Install Auto-cpufreq
+prompt_for_optional_install "Do you want to install Auto-cpufreq (For Laptops)?" install_auto_cpufreq
+install_auto_cpufreq() {
+    print_message "${GREEN}" "Installing Auto-cpufreq..."
+    if ! git clone https://github.com/AdnanHodzic/auto-cpufreq.git "/tmp/auto-cpufreq" &> /dev/null; then
+        print_message "${RED}" "Failed to clone auto-cpufreq repository."
+        return 1
+    fi
+    sudo /tmp/auto-cpufreq/auto-cpufreq-installer 
+    sudo auto-cpufreq --install
+}
+
 # Installing virtualization
 prompt_for_optional_install "Do you want to install virtualization?" install_virtualization
 install_virtualization() {
