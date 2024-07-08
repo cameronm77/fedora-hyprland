@@ -160,7 +160,7 @@ print_message "${GREEN}" "Installing necessary packages..."
 install_packages @"Common NetworkManager Submodules" @"Development Tools" @"Hardware Support" @"Security Lab" @"Administration Tools" @"System Tools" @"C Development Tools and Libraries" @"Games and Entertainment" @"VideoLAN Client" @"Graphical Internet" @"Office/Productivity" @"LibreOffice" @"Domain Membership" @"Headless Management" @"Design Suite" @"Editors"
 
 # Fedora RPM Fusion
-install_packages "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm" "http://download1.rpmfusion.org/nonfree/fedora/steam/$releasever/$basearch/"
+install_packages "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
 
 # Detect and install NVIDIA drivers
 nvidia
@@ -225,20 +225,20 @@ prompt_for_confirmation "Do you want to proceed with optional installations?"
 
 # Install CLI Packages
 print_message "${GREEN}" "Installing CLI packages..."
-install_packages "htop" "neovim" "gh" "autojump" "cmatrix" "hugo" "rclone" "tldr" "tree" "trash-cli" "powertop" "qalculate" "python3-pip" "dbus-glib" "papirus-icon-theme" "wireguard-tools" "libwebp-devel" "jq" "mtr" "p7zip" "zoxide" "ykclient" "ykpers" "yubico-piv-tool" "pam_yubico" "fido2-tools" "pamtester" "duo_unix" "duo_unix-selinux" "pam_duo" 
+install_packages "htop" "neovim" "gh" "autojump" "cmatrix" "hugo" "rclone" "tldr" "tree" "trash-cli" "powertop" "qalculate" "python3-pip" "dbus-glib" "papirus-icon-theme" "wireguard-tools" "libwebp-devel" "jq" "mtr" "p7zip" "zoxide" "ykclient" "ykpers" "yubico-piv-tool" "pam_yubico" "fido2-tools" "pamtester" "duo_unix" "duo_unix-selinux" "pam_duo"
 
 # Install GUI packages
 print_message "${GREEN}" "Adding repositories..."
 if ! sudo dnf config-manager --add-repo https://repo.nordvpn.com/yum/nordvpn/centos/x86_64 -y &> /dev/null; then
     print_message "${RED}" "Failed to add NordVPN repository."
-if ! sudo dnf config-manager --add-repo https://packages.microsoft.com/yumrepos/edge/ -y &> /dev/null; then
+if ! sudo dnf config-manager --add-repo https://packages.microsoft.com/yumrepos/edge -y &> /dev/null; then
     print_message "${RED}" "Failed to add MS Edge repository."
-if ! sudo dnf config-manager --add-repo https://packages.microsoft.com/fedora/40/prod/ -y &> /dev/null; then
+if ! sudo dnf config-manager --add-repo https://packages.microsoft.com/fedora/40/prod -y &> /dev/null; then
     print_message "${RED}" "Failed to add MS Prod repository."
 if ! sudo dnf config-manager --add-repo https://pkg.duosecurity.com/Fedora/38/x86_64 -y &> /dev/null; then
-    print_message "${RED}" "Failed to add MS Prod repository."
+    print_message "${RED}" "Failed to add Duo repository."
 fi
-x
+
 print_message "${GREEN}" "Installing GUI packages..."
 install_packages "nordvpn" "easyeffects" "calibre" "cool-retro-term" "baobab" "deluge-gtk" "gnome-disk-utility" "gnucash" "gparted" "firefox" "mousepad" "kde-connect" "pavucontrol" "qalculate-gtk" "inkscape" "ristretto" "gimp" "gimp-resynthesizer" "gimp-lensfun" "rawtherapee" "torbrowser-launcher" "vlc" "rpi-imager" "simple-scan" "wireshark" "nextcloud-client" "qflipper"
 
